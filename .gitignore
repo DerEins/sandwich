@@ -1,0 +1,5 @@
+# .gitignore -- List of files ignored by git
+*.[oa]
+*~
+*.vscode
+*.clang-format
