@@ -2,32 +2,26 @@
 #include "rule.h"
 #include <stdio.h>
 
-/** Concrete struct representing a queue of modifications which has to be done on a world */
-struct change {
-    int x;
-    int y;
-    int idx_rule;
-    struct change* next;
-};
-
-struct queue {
-    int len_queue;
-    struct change list_changes[WIDTH * HEIGHT];
-    struct change* first_to_do;
-    struct change* first_done;
-};
-
-struct change* queue_append(struct queue* queue, int idx_rule, int x, int y)
+/** Create a new change in an existing queue */
+struct change* change_create(struct queue* queue, int i, int j, int idx_rule)
 {
     ++(queue->len_queue);
     struct change* change = &(queue->list_changes[queue->len_queue]);
+    change->i = i;
+    change->j = j;
     change->idx_rule = idx_rule;
-    change->x = x;
-    change->y = y;
     change->next = NULL;
     return change;
 }
 
+/** Print a change attribute to standard output */
+void change_view(struct change* change)
+{
+    printf("Coordonnées cellule : (%d, %d) \n", change->i, change->j);
+    printf("Numéro de règle: %d \n", change->idx_rule);
+}
+
+/** Initialize attributes of an existing queue*/
 void queue_init(struct queue* queue)
 {
     queue->len_queue = 0;
@@ -35,8 +29,11 @@ void queue_init(struct queue* queue)
     queue->first_done = NULL;
 }
 
-void change_add(struct queue* queue, struct change* change)
+/** Add a change to the end of an existing queue*/
+void queue_append(struct queue* queue, int i, int j, int idx_rule)
 {
+    struct change* change = change_create(queue, i, j, idx_rule);
+
     if (queue->first_to_do == NULL) {
         queue->first_to_do = change;
     } else {
@@ -46,19 +43,25 @@ void change_add(struct queue* queue, struct change* change)
     }
 }
 
-void change_remove(struct queue* queue, struct change* change)
+void queue_view_to_do(struct queue* queue)
 {
-    struct change* previous_change = queue->first_to_do;
-    while (previous_change->next != change) {
-        previous_change = previous_change->next;
+    struct change* change = queue->first_to_do;
+    while (change != NULL) {
+        change_view(change);
+        change = change->next;
     }
-    previous_change->next = change->next;
+}
+
+void queue_pop(struct queue* queue)
+{
+    struct change* popped_change = queue->first_to_do;
+    queue->first_to_do = popped_change->next;
 
     if (queue->first_done == NULL) {
-        queue->first_done = change;
+        queue->first_done = popped_change;
     } else {
         struct change* change_tmp = queue->first_done;
-        queue->first_done = change;
-        change->next = change_tmp;
+        queue->first_done = popped_change;
+        popped_change->next = change_tmp;
     }
 }
