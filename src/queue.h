@@ -3,25 +3,36 @@
 
 #include "world.h"
 
-/** Abstract struct representing a queue of moodifications */
-struct queue;
+/** Concrete struct representing a modifications inside a queue */
+struct change {
+    unsigned int i, j, idx_rule;
+    struct change* next;
+};
 
-/** Abstract struct representing a modicifation inside the queue */
-struct change;
+/** Concrete struct representing a queue of modifications which has to be done on a world */
+struct queue {
+    int len_queue;
+    struct change list_changes[WIDTH * HEIGHT];
+    struct change* first_to_do;
+    struct change* first_done;
+};
 
 /** Create a new change */
-struct change* queue_append(struct queue* queue, int x, int y, int idx_rule);
+struct change* change_create(struct queue* queue, int i, int j, int idx_rule);
 
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
 
 /** Add a modificatvoidion to an existing queue*/
-void change_add(struct queue* queue, struct change* change);
+void queue_append(struct queue* queue, int i, int j, int idx_rule);
+
+/** List all element of a queue*/
+void queue_view_to_do(struct queue* queue);
 
 /** Remove a change to a queue*/
-void change_rm(struct queue* queue, struct change* change);
+void queue_pop(struct queue* queue);
 
 /** Apply a modifications queue to an existing world*/
-void change_apply(struct queue* queue, struct world* world);
+void change_apply(struct queue* queue);
 
 #endif // __QUEUE_H__
