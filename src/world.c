@@ -1,8 +1,10 @@
+#include <stdio.h>
 #include "world.h"
 
 /** */
 int get_cell(struct world w, unsigned int i, unsigned int j)
 {
+
     return 0;
 }
 
@@ -17,22 +19,15 @@ struct world world_init()
     return w;
 }
 
-struct color{
-    int r;
-    int g;
-    int b;
-}; 
-
 /** display a world according to the rules specified*/
 void world_disp(struct world w)
 {
-    printf("%d %d\n",WIDTH, HEIGHT);
+    printf("#\n");
     for(int i=0; i<WIDTH*HEIGHT; i++)
     {
-        printf("#\n");
         if((i%WIDTH) == (WIDTH-1))
         {
-            printf("%d\n", w.t[i]);
+            printf("%d \n", w.t[i]);
         }
         else
             printf("%d ", w.t[i]);

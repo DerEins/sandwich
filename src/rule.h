@@ -3,6 +3,7 @@
 
 #include "world.h"
 
+
 /** Abstract struct representing a rule for a cellular automaton */
 struct rule;
 
