@@ -5,6 +5,8 @@ SANDWICH_FLAGS = -DWIDTH=$(WIDTH) -DHEIGHT=$(HEIGHT)
 
 all: project
 
+test : test_project test_queue
+
 project: src/project.c
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/project.c -o src/project
 
