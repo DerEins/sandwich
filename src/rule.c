@@ -1,18 +1,23 @@
 #include "world.h"
 #include <stdio.h>
 
-#define NB_NEIGHTBORS 3
+#define NB_NEIGHTBORS 9
+#define NB_RULES 512
+// #define NB_RULES 2
+
 #define B 16777215
 
-struct rule
-{
+struct rule {
     unsigned int pattern[NB_NEIGHTBORS]; /** a voir pour le motif*/
     unsigned int change; /** la valeur du changement du pixel*/
     // il faudra changer change en tableau dans un deuxieme tps
 };
 
-struct rule rules[2]; 
+struct rule rules[NB_RULES];
 
+/* Rules initialization, aim to be edited to implement new rules **/
+
+/*
 void rules_init() //pour les regles de la vie, on a 
 {
     struct rule r;
@@ -29,15 +34,43 @@ void rules_init() //pour les regles de la vie, on a
     r.change=0;
     rules[1]=r;
 }
+*/
+
+void rules_init() //pour les regles de la vie, on a
+{
+    int tmp = 0;
+    int n_B = 0;
+    for (int i = 0; i < NB_RULES; ++i) {
+        tmp = i;
+        n_B = 0;
+        for (int j = NB_NEIGHTBORS; j > 0; --j) {
+            if (tmp % 2 == 0) {
+                rules[i].pattern[j - 1] = 0;
+            } else {
+                rules[i].pattern[j - 1] = B;
+                if (j - 1 != 4) {
+                    ++n_B;
+                }
+            }
+            tmp = tmp / 2;
+
+            if (rules[i].pattern[4] == 0 && n_B == 3) {
+                rules[i].change = B;
+            } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
+                rules[i].change = 0;
+            }
+        }
+    }
+}
 
 unsigned int rules_count()
-{   
+{
     unsigned int n;
-    n = 512; /** la vrai formule : nb_couleur ^(NB_NEIGHTBORS)*/
+    n = NB_RULES; /** la vrai formule : nb_couleur ^(NB_NEIGHTBORS)*/
     return n;
 }
 
-struct rule * rule_get(unsigned int i)
+struct rule* rule_get(unsigned int i)
 {
     return &rules[i];
 }
@@ -56,26 +89,20 @@ struct rule * rule_get(unsigned int i)
     tab[8]=w->t[(i+1)*WIDTH+(j+1)];
 }*/
 
-void find_neighbors(int tab[3], const struct world* w,unsigned int i, unsigned int j)
+void find_neighbors(int tab[3], const struct world* w, unsigned int i, unsigned int j)
 {
-    if(j==0)
-    {
-        tab[0]=w->t[(i+1)*WIDTH-1];
-    }
-    else if(j==WIDTH)
-    {
-        tab[0]=w->t[i*WIDTH];
-    }
-    else 
-        tab[0]=w->t[i*WIDTH+j];
+    if (j == 0) {
+        tab[0] = w->t[(i + 1) * WIDTH - 1];
+    } else if (j == WIDTH) {
+        tab[0] = w->t[i * WIDTH];
+    } else
+        tab[0] = w->t[i * WIDTH + j];
 }
 
-int compare_t(int c, int *t1, int *t2)
+int compare_t(int c, int* t1, int* t2)
 {
-    for(int i = 0; i<c; i++)
-    {
-        if(t1[i]!=t2[i])
-        {
+    for (int i = 0; i < c; i++) {
+        if (t1[i] != t2[i]) {
             return 0;
         }
     }
@@ -91,8 +118,8 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
 }
 
 unsigned int rule_num_changes(const struct rule* r)
-{ 
-    return 1; // on est dans l'achiev 1 avec 1 seul change possible 
+{
+    return 1; // on est dans l'achiev 1 avec 1 seul change possible
 }
 
 /** unsigned int rule_change_to(const struct rule* r, unsigned int idx) on ne l'utilise pas ici car 1 seul changement*/

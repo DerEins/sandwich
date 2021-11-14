@@ -20,11 +20,17 @@ struct queue {
 /** Create a new change */
 struct change* change_create(struct queue* queue, int i, int j, int idx_rule);
 
+/** View a change queue */
+void change_view(struct change* change);
+
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
 
 /** Add a modificatvoidion to an existing queue*/
 void queue_append(struct queue* queue, int i, int j, int idx_rule);
+
+/** */
+void queue_get_first_change(struct queue* queue);
 
 /** List all element of a queue*/
 void queue_view_to_do(struct queue* queue);
