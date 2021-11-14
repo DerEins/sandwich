@@ -20,19 +20,29 @@ struct rule rules[NB_RULES];
 /*
 void rules_init() //pour les regles de la vie, on a 
 {
-    struct rule r;
-    for(int i = 0; i<3; i++)
-    {
-        r.pattern[i]=0;
+    int tmp = 0;
+    int n_B = 0;
+    for (int i = 0; i < NB_RULES; ++i) {
+        tmp = i;
+        n_B = 0;
+        for (int j = NB_NEIGHTBORS; j > 0; --j) {
+            if (tmp % 2 == 0) {
+                rules[i].pattern[j - 1] = 0;
+            } else {
+                rules[i].pattern[j - 1] = B;
+                if (j - 1 != 4) {
+                    ++n_B;
+                }
+            }
+            tmp = tmp / 2;
+
+            if (rules[i].pattern[4] == 0 && n_B == 3) {
+                rules[i].change = B;
+            } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
+                rules[i].change = 0;
+            }
+        }
     }
-    r.change=B;
-    rules[0]=r;
-    for(int i = 0; i<3; i++)
-    {
-        r.pattern[i]=B;
-    }
-    r.change=0;
-    rules[1]=r;
 }
 */
 
