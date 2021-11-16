@@ -99,19 +99,36 @@ struct rule* rule_get(unsigned int i)
     tab[8]=w->t[(i+1)*WIDTH+(j+1)];
 }*/
 
-void find_neighbors(int tab[3], const struct world* w, unsigned int i, unsigned int j)
+int modulo(int x, int n)
 {
-    if (j == 0) {
-        tab[0] = w->t[(i + 1) * WIDTH - 1];
-    } else if (j == WIDTH) {
-        tab[0] = w->t[i * WIDTH];
-    } else
-        tab[0] = w->t[i * WIDTH + j];
+    if(x<0)
+    {
+        return n-(x%n);
+    }
+    else 
+        return x%n;
 }
 
-int compare_t(int c, int* t1, int* t2)
+/** trouve les 9 voisins d'une case (i,j) et le met dans un tableau avec les 3premiers en (i-1), puis les 3 suivant en i ...*/
+void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, unsigned int j)
 {
-    for (int i = 0; i < c; i++) {
+    for(int m=0; m<3; m++)
+    {
+        for (int n=0; n<3; n++)
+        {
+            int idx_l, idx_c; //index ligne et colonne
+            idx_l = modulo(i+(m-1), HEIGHT); // 1 est le milieu de 3, si on veut une generalisation faire millieu du motif a la place de -1
+            idx_c = modulo(j+(n-1), WIDTH);
+            tab[3*m+n]=w->t[idx_l*WIDTH+idx_c];
+        }
+    }
+}
+
+
+/** compare un tableau*/
+int compare_t(int n, unsigned int t1[], const unsigned int t2[])
+{
+    for (int i = 0; i < n; i++) {
         if (t1[i] != t2[i]) {
             return 0;
         }
@@ -120,11 +137,12 @@ int compare_t(int c, int* t1, int* t2)
 }
 
 //faire une fonction : find_neighbors, pour mettre tous les voisins dans un tableau
+//une amelioration possible est de tester les voisins 1 a 1 et retourner faux des la premiere incoherence
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
-    int tab[NB_NEIGHTBORS];
+    unsigned int tab[NB_NEIGHTBORS];
     find_neighbors(tab, w, i, j);
-    return compare_t(w->t, tab, NB_NEIGHTBORS);
+    return compare_t(NB_NEIGHTBORS, r->pattern, tab);
 }
 
 unsigned int rule_num_changes(const struct rule* r)
