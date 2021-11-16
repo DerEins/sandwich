@@ -21,5 +21,7 @@ test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) tst/test_queue.c
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) -o test_queue queue.o test_queue.o
 
+test_rule : 
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c 
 clean:
 	rm -f project test_project test_queue *.o vgcore*
