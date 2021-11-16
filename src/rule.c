@@ -46,6 +46,33 @@ void rules_init() //pour les regles de la vie, on a
 }
 */
 
+// ### ceci est un test ###
+void rules_init2()
+{
+    struct rule r;
+    for(int i=0; i<9; i++)
+    {
+        r.pattern[i]=i;
+    }
+    r.change = 10;
+    rules[0] = r;
+}
+
+void afficher_rule0_pattern()
+{
+    afficher_tableau(9, rules[0].pattern);
+}
+
+void afficher_rules_pattern()
+{
+    for(int i=0; i<NB_RULES; i++)
+    {
+        afficher_tableau(9, rules[i].pattern);
+    }
+}
+
+// ceci est un test
+
 void rules_init() //pour les regles de la vie, on a
 {
     int tmp = 0;
@@ -103,7 +130,7 @@ int modulo(int x, int n)
 {
     if(x<0)
     {
-        return n-(x%n);
+        return n+(x%n);
     }
     else 
         return x%n;

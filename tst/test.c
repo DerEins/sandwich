@@ -15,7 +15,7 @@ int main()
     w = world_init();
     /**w.t[0] = 2;
     w.t[4] = 20;
-    world_disp(w);*/
+    world_disp(w);
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
     for(int i=0; i<M; i++)
@@ -33,7 +33,7 @@ int main()
                     }
                 }
             }
-        } 
+        } */
     }
     return 0;
 }

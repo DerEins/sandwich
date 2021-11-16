@@ -22,6 +22,13 @@ test_queue : tst/test_queue.c
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) -o test_queue queue.o test_queue.o
 
 test_rule : 
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c 
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
+
+test_rule2 :
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_rule.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule2 rule.o world.o test_rule.o
+
 clean:
-	rm -f project test_project test_queue *.o vgcore*
+	rm -f project test_* *.o vgcore*
