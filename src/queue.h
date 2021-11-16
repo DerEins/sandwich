@@ -15,30 +15,20 @@ struct queue {
     struct change list_changes[WIDTH * HEIGHT];
     struct change* first_to_do;
     struct change* first_done;
+    struct change* last_to_do;
+    struct change* last_done;
 };
 
 /** Create a new change */
 struct change* change_create(struct queue* queue, int i, int j, int idx_rule);
 
-/** View a change queue */
-void change_view(struct change* change);
-
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
 
-/** Add a modificatvoidion to an existing queue*/
+/** Add a change to the end of an existing queue*/
 void queue_append(struct queue* queue, int i, int j, int idx_rule);
 
-/** */
-void queue_get_first_change(struct queue* queue);
-
-/** List all element of a queue*/
-void queue_view_to_do(struct queue* queue);
-
-/** Remove a change to a queue*/
-void queue_pop(struct queue* queue);
-
-/** Apply a modifications queue to an existing world*/
-void change_apply(struct queue* queue);
+/** Remove a change to a queue and return the change*/
+struct change* queue_pop(struct queue* queue);
 
 #endif // __QUEUE_H__
