@@ -1,6 +1,7 @@
 #include "../src/world.h"
 #include "../src/world_ext.h" 
 
+//prendre comme cmd WIDTH=3 HEIGHT=4 make test_project
 int main(int argc, char **argv)
 {
     struct world w;
