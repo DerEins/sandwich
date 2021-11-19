@@ -21,7 +21,7 @@ test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) tst/test_queue.c
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) -o test_queue queue.o test_queue.o
 
-test_rule : 
+test_rule : #ne fonctionne pas !
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
 
 test_rule2 :

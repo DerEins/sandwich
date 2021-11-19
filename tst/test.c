@@ -6,12 +6,15 @@
 #include <unistd.h>
 
 extern char* optarg;
-#define M 5 //le nombre d'images generees
 
-//prendre comme cmd WIDTH=3 HEIGHT=4 make test_project
 struct world world_init();
 
 void world_disp(struct world w);
+
+void world_apply_rule(struct world w, struct rule r, int i, int j)
+{
+    w->pattern[i*WIDTH+j]=r.change;
+}
 
 int main(int argc, char* argv[])
 {
@@ -38,25 +41,32 @@ int main(int argc, char* argv[])
         input_opt = getopt(argc, argv, "s:");
     }
     struct world w;
-    w = world_init(opt, seed);
-    world_disp(w);
-    /**w.t[0] = 2;
-    w.t[4] = 20;
-    world_disp(w);
+    /* pas necessaire ici  je pense 
+    w = world_init(opt, seed); //pq des parametres dans world_init ??
+    world_disp(w);*/
+
+
+    w = world_init();
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
-    for (int i = 0; i < M; i++) {
+    for (int i = 0; i < nb_pictures; i++) {
         struct queue* q;
         queue_init(q);
         for (int k = 0; k < HEIGHT; k++) {
             for (int l = 0; l < WIDTH; l++) {
                 for (int j = 0; j < rules_count(); j++) {
                     if (rule_match(&w, rule_get(j), k, l)) {
-                        queue_append(q, k, l, j);
+                        queue_append(q, k, j);
                     }
                 }
             }
-        } */
+        } 
+        while(not is_empty(q)) //a def
+        {
+            struct change* change_tmp; // ou est la def de struct change ?
+            change_tmp = queue_pop(q);
+            world_apply_rule(w, change_tmp->, )
+        }
     }
     return 0;
 }
