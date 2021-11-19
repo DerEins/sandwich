@@ -56,7 +56,11 @@ unsigned int rules_count()
 
 struct rule* rule_get(unsigned int i)
 {
-    return &rules[i];
+    if(i<rules_count())
+    {
+        return &rules[i];
+    }
+    return NULL;
 }
 
 /** The usal modulo for positive number, for the negative number the function return a positive number like for congruence */
