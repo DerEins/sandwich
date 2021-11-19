@@ -8,27 +8,22 @@ all: project
 test : test_project test_queue
 
 project: src/project.c
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/project.c -o src/project
-
-test_project: tst/test.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/world.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) tst/test.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) test.o world.o rule.o -o test_project
+	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c
+	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c 
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o -o src/project
 
 test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c 
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) tst/test_queue.c
 	gcc $(CFLAGS) $(SANDWICH_FLAGS) -o test_queue queue.o test_queue.o
 
-test_rule : #ne fonctionne pas !
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
-
-test_rule2 :
+test_rule :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_rule.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule2 rule.o world.o test_rule.o
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule rule.o world.o test_rule.o
 
 clean:
-	rm -f project test_* *.o vgcore*
+	rm -f src/project test_* *.o vgcore*

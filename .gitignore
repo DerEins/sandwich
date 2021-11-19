@@ -6,5 +6,6 @@
 vgcore.
 *project 
 test_project 
-test_queue 
+test_queue
+test_rule
 *.o

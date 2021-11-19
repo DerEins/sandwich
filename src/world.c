@@ -25,13 +25,13 @@ struct world world_init(char opt, int seed)
 }
 
 /** display a world according to the rules specified*/
-void world_disp(struct world w)
+void world_disp(struct world * w)
 {
     printf("#\n");
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         if ((i % WIDTH) == (WIDTH - 1)) {
-            printf("%d \n", w.t[i]);
+            printf("%d \n", w->t[i]);
         } else
-            printf("%d ", w.t[i]);
+            printf("%d ", w->t[i]);
     }
 }

@@ -3,8 +3,6 @@
 #include "../src/queue.h"
 #include <stdio.h>
 
-//#define NB_RULES 512
-
 struct world world_init();
 
 void world_disp(struct world w);
@@ -32,7 +30,7 @@ int main()
     unsigned int tab[9];
     find_neighbors(tab, &w, 0, 0);
     printf("%d\n", WIDTH);
-    afficher_tableau(9, tab);
+    //afficher_tableau(9, tab);
     // ### test compare_t ###
     unsigned int t1[] = {1,2,3};
     unsigned int t2[] = {1,2,3};
@@ -43,12 +41,17 @@ int main()
     printf("compare t1, t3 :%d\n", compare_t(3, t1, t3));
     printf("compare t1, t4 :%d\n", compare_t(3, t1, t4));
     // ### test rule_match ###
-    printf("%d\n", rule_match(&w, rule_get(0), 0, 0));
-    printf("%d\n", rule_match(&w, rule_get(0), 1, 1));
-    afficher_rule0_pattern();
+    for(int i=0; i<3; i++)
+    {
+        for(int j=0; j<3; j++)
+        {
+            printf("%d\n", rule_match(&w, rule_get(0), i, j));
+        }
+    }
+    //afficher_rule0_pattern();
     //test rule_init
     printf("### Test rules_init ###\n");
     rules_init();
-    afficher_rules_pattern();
+    //afficher_rules_pattern();
     return 0;
 }

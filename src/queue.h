@@ -12,7 +12,7 @@ struct change {
 /** Concrete struct representing a queue of modifications which has to be done on a world */
 struct queue {
     int len_queue;
-    struct change list_changes[WIDTH * HEIGHT];
+    struct change list_changes[WIDTH * HEIGHT + 2];
     struct change* first_to_do;
     struct change* first_done;
     struct change* last_to_do;
@@ -20,7 +20,7 @@ struct queue {
 };
 
 /** Create a new change */
-struct change* change_create(struct queue* queue, int i, int j, int idx_rule);
+struct change* change_create(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule);
 
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
@@ -29,7 +29,7 @@ void queue_init(struct queue* queue);
 int queue_is_not_empty(struct queue* queue);
 
 /** Add a change to the end of an existing queue*/
-void queue_append(struct queue* queue, int i, int j, int idx_rule);
+void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule);
 
 /** Remove a change to a queue and return the change*/
 struct change* queue_pop(struct queue* queue);

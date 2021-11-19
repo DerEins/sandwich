@@ -36,7 +36,11 @@ void rules_init() //for the rules of life, we have the following patterns :
                 rules[i].change = B;
             } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
                 rules[i].change = 0;
+            } else
+            {
+                rules[i].change = rules[i].pattern[4];
             }
+            
         }
     }
 }
@@ -96,7 +100,7 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
 {
     unsigned int tab[NB_NEIGHTBORS];
     find_neighbors(tab, w, i, j);
-    return compare_t(NB_NEIGHTBORS, r->pattern, tab);
+    return (compare_t(NB_NEIGHTBORS, r->pattern, tab) && (r->pattern!=w->t[i*WIDTH+j]));
 }
 
 unsigned int rule_num_changes(const struct rule* r)
@@ -106,6 +110,16 @@ unsigned int rule_num_changes(const struct rule* r)
 
 // unsigned int rule_change_to(const struct rule* r, unsigned int idx) 
 //This function is not use in this case
+
+unsigned int rule_change_to(const struct rule* r, unsigned int idx)
+{
+    if(idx<rule_num_changes(r))
+    {
+        return r->change; //idx used whith more color
+    }
+    else 
+        return 0; //trouver une autre solution
+}
 
 // #### FUNCTIONS CREATED FOR THE TESTS ####
 // They are in this file because they need an access to the array rules 
@@ -121,6 +135,7 @@ void rules_init2()
     rules[0] = r;
 }
 
+/*
 void afficher_rule0_pattern()
 {
     afficher_tableau(9, rules[0].pattern);
@@ -133,3 +148,4 @@ void afficher_rules_pattern()
         afficher_tableau(9, rules[i].pattern);
     }
 }
+*/
