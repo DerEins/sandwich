@@ -114,10 +114,49 @@ int test_append()
     return EXIT_SUCCESS;
 }
 
+int test_is_empty()
+{
+    printf("######################################################################\n");
+    printf("######--- TEST 2 : Détermination de la contenance d'une file ---######\n");
+    printf("######################################################################\n");
+
+    struct queue queue_test;
+    queue_init(&queue_test);
+
+    unsigned int test_i = 11;
+    unsigned int test_j = 21;
+    unsigned int test_idx_rule = 1;
+    printf("Début du test de contenance... \n \n");
+
+    /* Test on an empty queue*/
+    printf("Cas d'une file vide...");
+    if (queue_is_not_empty(&queue_test)) {
+        fprintf(stderr, "ÉCHEC : la file est censée être vide mais le test de contenance dit le contraire.\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("VALIDÉ ! \n");
+    /* Test on a non-empty queue*/
+    queue_append(&queue_test, test_i, test_j, test_idx_rule);
+
+    printf("Cas d'une file non-vide...");
+    if (!queue_is_not_empty(&queue_test)) {
+        fprintf(stderr, "ÉCHEC : la file est censée ne pas être vide mais le test de contenance dit le contraire.\n");
+        exit(EXIT_FAILURE);
+    }
+    printf("VALIDÉ ! \n");
+
+    printf("\nVisiblement, le test de contenance de file fonctionne. \n");
+    printf("Voici l'état de la file à la fin du test de contenance : \n");
+    queue_view_to_do(&queue_test);
+
+    printf("\nTest d'ajout terminé avec succès. \n \n");
+    return EXIT_SUCCESS;
+}
+
 int test_pop()
 {
     printf("##############################################################\n");
-    printf("######--- TEST 2 : Suppression de premier changement ---######\n");
+    printf("######--- TEST 3 : Suppression de premier changement ---######\n");
     printf("##############################################################\n");
 
     struct queue queue_test;
@@ -184,10 +223,13 @@ int main(int argc, char* argv[])
         error = test_append();
         break;
     case 2:
+        error = test_is_empty();
+        break;
+    case 3:
         error = test_pop();
         break;
     default:
-        error = test_append() + test_pop();
+        error = test_append() + test_is_empty() + test_pop();
     }
     return error;
 }

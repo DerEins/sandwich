@@ -9,3 +9,4 @@ test_project
 test_queue
 test_rule
 *.o
+sdl
