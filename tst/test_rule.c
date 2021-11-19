@@ -2,6 +2,8 @@
 #include "../src/rule.h"
 #include "../src/queue.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 struct world world_init();
 
@@ -11,7 +13,7 @@ void afficher_tableau(int n, unsigned int *t)
 {
     for(int i=0; i<n; i++)
     {
-        printf("%d  ", t[i]);
+        printf("%d ", t[i]);
     }
     printf("\n");
 }

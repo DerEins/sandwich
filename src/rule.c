@@ -3,12 +3,13 @@
 #include "world.h"
 #include "rule.h"
 
-#define NB_NEIGHTBORS 9
+#define NB_NEIGHBORS 9
 #define NB_RULES 512
 #define B 16777215
 
 struct rule {
-    unsigned int pattern[NB_NEIGHTBORS]; // another def is possible instead of patterns
+    unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
+    unsigned int len_changes;
     unsigned int change; // the new state of the pixel after 
 };
 
@@ -19,9 +20,10 @@ void rules_init() //for the rules of life, we have the following patterns :
     int tmp = 0;
     int n_B = 0;
     for (int i = 0; i < NB_RULES; ++i) {
+        rules[i].len_changes = 1;
         tmp = i;
         n_B = 0;
-        for (int j = NB_NEIGHTBORS; j > 0; --j) {
+        for (int j = NB_NEIGHBORS; j > 0; --j) {
             if (tmp % 2 == 0) {
                 rules[i].pattern[j - 1] = 0;
             } else {
@@ -85,7 +87,7 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, u
 
 
 /** Return a booleen considering if two arrays of length n are the same */
-int compare_t(int n, unsigned int t1[], const unsigned int t2[])
+int compare_t(int n, const unsigned int t1[], unsigned int t2[])
 {
     for (int i = 0; i < n; i++) {
         if (t1[i] != t2[i]) {
@@ -98,14 +100,14 @@ int compare_t(int n, unsigned int t1[], const unsigned int t2[])
 //une amelioration possible est de tester les voisins 1 a 1 et retourner faux des la premiere incoherence
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
-    unsigned int tab[NB_NEIGHTBORS];
+    unsigned int tab[NB_NEIGHBORS];
     find_neighbors(tab, w, i, j);
-    return (compare_t(NB_NEIGHTBORS, r->pattern, tab) && (r->pattern!=w->t[i*WIDTH+j]));
+    return (compare_t(NB_NEIGHBORS, r->pattern, tab));
 }
 
 unsigned int rule_num_changes(const struct rule* r)
 {
-    return 1; // on est dans l'achiev 1 avec 1 seul change possible
+    return r->len_changes; // on est dans l'achiev 1 avec 1 seul change possible
 }
 
 // unsigned int rule_change_to(const struct rule* r, unsigned int idx) 

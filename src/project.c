@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
     w = world_init(opt, seed);
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
-    for (unsigned int i = 0; i < nb_pictures; i++) {
+    for (int i = 0; i < nb_pictures; i++) {
         struct queue q;
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
