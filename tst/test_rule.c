@@ -3,12 +3,7 @@
 #include "../src/queue.h"
 #include <stdio.h>
 
-//#define NB_NEIGHTBORS 9
-#define NB_RULES 512
-
-
-
-//prendre comme cmd WIDTH=3 HEIGHT=3 make test_project
+//#define NB_RULES 512
 
 struct world world_init();
 
