@@ -18,6 +18,38 @@ void afficher_tableau(int n, unsigned int *t)
     printf("\n");
 }
 
+int test_rule_match(const struct world* w, const struct rule* r)
+{
+    printf("Test le nombre de motifs qui correspond à une règle: ")
+    int nb_match = 0;
+    for(int i=0; i<HEIGHT; i++)
+    {
+        for(int j=0; j<WIDTH; j++)
+        {
+            if(rule_match(&w, rule_get(0), i, j))
+            {
+                ++nb_match;
+            }
+        }
+    }
+    if(nb_match=0)
+    {
+        printf("Erreur: Aucun match trouvé entre une regle et un motif du monde");
+    }
+    else if(nb_match>1)
+    {
+        printf("Erreur: il y a une regle qui correspond a plusieurs motifs");
+        return EXIT_FAILURE;
+    }
+    else 
+    {
+        printf("VALIDE !\n");
+        return EXIT_SUCCESS;
+    }
+
+}
+
+
 int main()
 {
     struct world w;
@@ -43,13 +75,6 @@ int main()
     printf("compare t1, t3 :%d\n", compare_t(3, t1, t3));
     printf("compare t1, t4 :%d\n", compare_t(3, t1, t4));
     // ### test rule_match ###
-    for(int i=0; i<3; i++)
-    {
-        for(int j=0; j<3; j++)
-        {
-            printf("%d\n", rule_match(&w, rule_get(0), i, j));
-        }
-    }
     //afficher_rule0_pattern();
     //test rule_init
     printf("### Test rules_init ###\n");
