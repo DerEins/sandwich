@@ -24,6 +24,12 @@ void queue_init(struct queue* queue)
     queue->last_done = NULL;
 }
 
+/** Check if a queue is empty */
+int queue_is_not_empty(struct queue* queue)
+{
+    return queue->first_to_do != NULL;
+}
+
 /** Add a change to the end of an existing queue*/
 
 void queue_append(struct queue* queue, int i, int j, int idx_rule)
@@ -43,7 +49,7 @@ void queue_append(struct queue* queue, int i, int j, int idx_rule)
 struct change* queue_pop(struct queue* queue)
 {
     struct change* popped_change = queue->first_to_do;
-    if (popped_change != NULL) {
+    if (queue_is_not_empty(queue)) {
         queue->first_to_do = popped_change->next;
 
         if (queue->first_done == NULL) {

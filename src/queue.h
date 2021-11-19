@@ -25,6 +25,9 @@ struct change* change_create(struct queue* queue, int i, int j, int idx_rule);
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
 
+/** Check if a queue is empty */
+int queue_is_not_empty(struct queue* queue);
+
 /** Add a change to the end of an existing queue*/
 void queue_append(struct queue* queue, int i, int j, int idx_rule);
 
