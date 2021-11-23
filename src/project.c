@@ -1,19 +1,19 @@
-#include "world.h"
 #include "queue.h"
 #include "rule.h"
+#include "world.h"
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
 
 extern char* optarg;
 
 struct world world_init();
 
-void world_disp(struct world * w);
+void world_disp(struct world* w);
 
-void world_apply_rule(struct world * w, struct rule* r, int i, int j)
+void world_apply_rule(struct world* w, struct rule* r, int i, int j)
 {
-    w->t[i*WIDTH+j]=rule_change_to(r, 0);
+    w->t[i * WIDTH + j] = rule_change_to(r, 0);
 }
 
 int main(int argc, char* argv[])
@@ -41,10 +41,9 @@ int main(int argc, char* argv[])
     }
     struct world w;
 
-    /* pas necessaire ici  je pense 
+    /* pas necessaire ici  je pense
     w = world_init(opt, seed); //pq des parametres dans world_init ??
     world_disp(w);*/
-
 
     w = world_init(opt, seed);
     rules_init();
@@ -54,15 +53,15 @@ int main(int argc, char* argv[])
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
-                unsigned int j = 0; 
-                while (!rule_match(&w, rule_get(j), k, l) && j < rules_count()) {
-                    ++j;
+                for (unsigned int j = 0; j < rules_count() - 1; ++j) {
+                    if (rule_match(&w, rule_get(j), k, l)) {
+                        queue_append(&q, k, l, j);
+                        break;
+                    }
                 }
-                queue_append(&q, k, l, j);
             }
-        } 
-        while(queue_is_not_empty(&q))
-        {
+        }
+        while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
             world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j);
