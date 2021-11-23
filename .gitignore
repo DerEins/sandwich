@@ -3,7 +3,7 @@
 *~
 *.vscode
 *.clang-format
-vgcore.
+vgcore.*
 *project 
 test_project 
 test_queue
