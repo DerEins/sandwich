@@ -15,7 +15,7 @@
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change[NB_COLOR]; // 5 diff color 
+    unsigned int change[NB_COLOR]; // 5 diff color
 };
 
 struct rule rules[MAX_RULE];
@@ -25,7 +25,7 @@ void rules_init() // for the rules of life, we have the following patterns :
     int tmp = 0;
     int n_B = 0;
     for (int i = 0; i < MAX_RULE; ++i) {
-        rules[i].len_changes = 1; //un choix entre noir et blanc
+        rules[i].len_changes = 1; // un choix entre noir et blanc
         tmp = i;
         n_B = 0;
         for (int j = NB_NEIGHBORS; j > 0; --j) {
@@ -41,18 +41,18 @@ void rules_init() // for the rules of life, we have the following patterns :
 
             if (rules[i].pattern[4] == 0 && n_B == 3) {
                 rules[i].change[0] = B;
-                //on prend la convention, il y a 3 couleurs primaires apres B ou W
-                rules[i].change[1]=RED;
-                rules[i].change[2]=GREEN;
-                rules[i].change[3]=BLUE;
+                // on prend la convention, il y a 3 couleurs primaires apres B ou W
+                rules[i].change[1] = RED;
+                rules[i].change[2] = GREEN;
+                rules[i].change[3] = BLUE;
                 rules[i].len_changes = 4;
             } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
-                rules[i].change = 0;
+                rules[i].change[0] = 0;
             } else {
-                rules[i].change = rules[i].pattern[4];
+                rules[i].change[0] = rules[i].pattern[4];
             }
         }
-    }//ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
+    } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
 }
 
 unsigned int rules_count()
@@ -110,16 +110,13 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
 
 unsigned int rule_num_changes(const struct rule* r)
 {
-    return r->len_changes; 
+    return r->len_changes;
 }
 
 unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 {
-    if(idx<rule_num_changes(r))
-    {
-        return r->change[idx]; //idx used whith more color
-    }
-    else 
-        return 0; //trouver une autre solution
+    if (idx < rule_num_changes(r)) {
+        return r->change[idx]; // idx used whith more color
+    } else
+        return 0; // trouver une autre solution
 }
-

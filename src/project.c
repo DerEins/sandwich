@@ -11,15 +11,18 @@ struct world world_init();
 
 void world_disp(struct world* w);
 
-void world_apply_rule(struct world * w, struct rule* r, int i, int j, unsigned int idx_color)
+void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_color)
 {
-    w->t[i*WIDTH+j]=rule_change_to(r, idx_color);
+    w->t[i * WIDTH + j] = rule_change_to(r, idx_color);
 }
 
 unsigned int chose_color(unsigned int nb_colors)
 {
     unsigned int r = rand();
-    return r%nb_colors;
+    if (r % 100 < 90) {
+        return 0;
+    }
+    return r % nb_colors;
 }
 
 int main(int argc, char* argv[])
@@ -66,10 +69,9 @@ int main(int argc, char* argv[])
                     }
                 }
             }
-        } 
+        }
         srand(seed);
-        while(queue_is_not_empty(&q))
-        {
+        while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
             unsigned int n = rule_num_changes(rule_get(change_tmp->idx_rule));
