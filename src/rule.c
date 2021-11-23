@@ -11,7 +11,6 @@
 #define BLUE 16711680
 #define NB_COLOR 5
 
-
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
@@ -25,13 +24,9 @@ void rules_init() //for the rules of life, we have the following patterns :
     int tmp = 0;
     int n_B = 0;
     for (int i = 0; i < MAX_RULE; ++i) {
-        rules[i].len_changes = 4; //un choix entre noir et blanc
+        rules[i].len_changes = 1; //un choix entre noir et blanc
         tmp = i;
         n_B = 0;
-        //on prend la convention, il y a 3 couleurs primaires apres B ou W
-        rules[i].change[1]=RED;
-        rules[i].change[2]=GREEN;
-        rules[i].change[3]=BLUE;
         for (int j = NB_NEIGHBORS; j > 0; --j) {
             if (tmp % 2 == 0) {
                 rules[i].pattern[j - 1] = 0;
@@ -45,13 +40,17 @@ void rules_init() //for the rules of life, we have the following patterns :
 
             if (rules[i].pattern[4] == 0 && n_B == 3) {
                 rules[i].change[0] = B;
+                //on prend la convention, il y a 3 couleurs primaires apres B ou W
+                rules[i].change[1]=RED;
+                rules[i].change[2]=GREEN;
+                rules[i].change[3]=BLUE;
+                rules[i].len_changes = 4;
             } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
                 rules[i].change[0] = 0;
             } else
             {
                 rules[i].change[0] = rules[i].pattern[4];
             }
-            
         }
     }//ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
 }
