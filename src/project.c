@@ -65,6 +65,7 @@ int main(int argc, char* argv[])
         {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
+            int n = rule_num
             world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j);
         }
         world_disp(&w);
