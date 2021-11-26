@@ -2,33 +2,26 @@
 #include <stdio.h>
 
 #include "rule.h"
+#include "utils.h"
 #include "world.h"
 
-enum state {
-    EMPTY = 0,
-    SAND = 16777215,
-    GRASS = 65280,
-    RANDOM_COLOR = 4294967295,
-    STATE_COUNT = 4,
-    FIRST_STATE = EMPTY
-};
+enum state;
 
 #define NB_NEIGHBORS 9
-#define MAX_RULE 513
+#define MAX_RULE 19684
 
-/*
 #define B 16777215
 #define RED 255
 #define GREEN 65280
 #define BLUE 16711680
 #define NB_COLOR 5
-#define COULEUR_SPECIALE 4294967295
 
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
     unsigned int change[STATE_COUNT]; // 5 diff color
-    unsigned int dx, dy; // vector difining the cell move
+    unsigned int dx[STATE_COUNT]; // vector difining the cell move
+    unsigned int dy[STATE_COUNT];
 };
 
 struct rule rules[MAX_RULE];
@@ -37,43 +30,49 @@ void rules_init() // for the rules of life, we have the following patterns :
 {
     int tmp = 0;
 
+    rules[0].len_changes = 1;
     for (int i = 0; i < NB_NEIGHBORS; ++i) {
         rules[0].pattern[i] = RANDOM_COLOR;
     }
-    rules[0].pattern[4] = EMPTY;
-
+    rules[0].pattern[4] = RANDOM_COLOR;
+    rules[0].change[0] = EMPTY;
+    rules[0].dx[0] = 0;
+    rules[0].dy[0] = 0;
     for (int i = 0; i < MAX_RULE; ++i) {
         rules[i + 1].len_changes = 1; // un choix entre noir et blanc
         tmp = i;
         for (int j = NB_NEIGHBORS; j > 0; --j) {
-            if (tmp % 2 == 0) {
+            if (tmp % 3 == 0) {
                 rules[i + 1].pattern[j - 1] = EMPTY;
-            } else {
+            } else if (tmp % 3 == 1) {
                 rules[i + 1].pattern[j - 1] = SAND;
+            } else {
+                rules[i + 1].pattern[j - 1] = GRASS;
             }
-            tmp = tmp / 2;
+            tmp = tmp / 3;
 
             if (rules[i + 1].pattern[4] == SAND) {
-                if (rules[i + 1].pattern[8] == GRASS) {
+                if (rules[i + 1].pattern[7] == GRASS) {
                     rules[i + 1].change[0] = GRASS;
-                    rules[i + 1].dx = 0;
-                } else if (rules[i].pattern[8] == EMPTY) {
+                    rules[i + 1].dx[0] = 1;
+                } else if (rules[i].pattern[7] == EMPTY) {
                     rules[i + 1].change[0] = SAND;
-                    rules[i + 1].dx = 1;
+                    rules[i + 1].dx[0] = 0;
                 } else {
                     rules[i + 1].change[0] = rules[i].pattern[4];
-                    rules[i + 1].dx = 0;
+                    rules[i + 1].dx[0] = 0;
                 }
             } else {
-                rules[i].change[0] = rules[i].pattern[4];
+                rules[i + 1].change[0] = rules[i + 1].pattern[4];
+                rules[i + 1].dx[0] = 0;
             }
-            rules[i].dy = 0;
+            rules[i + 1].dy[0] = 0;
         }
     } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
 }
 unsigned int rules_count()
 {
-    return 512; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
+    return MAX_RULE; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
 }
 
 struct rule* rule_get(unsigned int i)
@@ -109,8 +108,7 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, u
 int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
 {
     for (int i = 0; i < n; i++) {
-        if(t_r[i]!=COULEUR_SPECIALE)
-        {
+        if (t_r[i] != RANDOM_COLOR) {
             if (t_r[i] != t_w[i]) {
                 return 0;
             }
@@ -142,10 +140,15 @@ unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 
 int rule_change_dx(const struct rule* r, unsigned int idx)
 {
-    return r->dy;
+    unsigned int max_change = rule_num_changes(r);
+    assert(max_change == 0 || idx < max_change);
+    fprintf(stderr, "dx: %d \n", r->dx[idx]);
+    return r->dx[idx];
 }
 
 int rule_change_dy(const struct rule* r, unsigned int idx)
 {
-    return r->dx;
+    unsigned int max_change = rule_num_changes(r);
+    assert(max_change == 0 || idx < max_change);
+    return r->dy[idx];
 }

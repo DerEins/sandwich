@@ -3,6 +3,7 @@
 
 #include "world.h"
 
+#define MAX_QUEUE_SIZE 10 * (WIDTH * HEIGHT) + 10
 /** Concrete struct representing a modifications inside a queue */
 struct change {
     unsigned int i, j, idx_rule;
@@ -12,7 +13,7 @@ struct change {
 /** Concrete struct representing a queue of modifications which has to be done on a world */
 struct queue {
     int len_queue;
-    struct change list_changes[WIDTH * HEIGHT + 2];
+    struct change list_changes[MAX_QUEUE_SIZE];
     struct change* first_to_do;
     struct change* first_done;
     struct change* last_to_do;
