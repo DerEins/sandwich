@@ -25,5 +25,11 @@ test_rule :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
 	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule rule.o world.o test_rule.o
 
+test_world :tst/ test_world.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o test_world.o
+
 clean:
 	rm -f src/project test_* *.o vgcore*

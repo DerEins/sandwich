@@ -24,7 +24,7 @@ struct world world_init(char opt, int seed)
     return w;
 }
 
-/** display a world according to the rules specified*/
+/** Display a world according to the rules specified*/
 void world_disp(struct world * w)
 {
     printf("#\n");
