@@ -11,6 +11,7 @@
 #define GREEN 65280
 #define BLUE 16711680
 #define NB_COLOR 5
+#define COULEUR_SPECIALE 4294967295
 
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
@@ -90,11 +91,14 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, u
 }
 
 /** Return a booleen considering if two arrays of length n are the same */
-int compare_t(int n, const unsigned int t1[], unsigned int t2[])
+int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
 {
     for (int i = 0; i < n; i++) {
-        if (t1[i] != t2[i]) {
-            return 0;
+        if(t_r[i]!=COULEUR_SPECIALE)
+        {
+            if (t_r[i] != t_w[i]) {
+                return 0;
+            }
         }
     }
     return 1;
@@ -105,7 +109,7 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
 {
     unsigned int tab[NB_NEIGHBORS];
     find_neighbors(tab, w, i, j);
-    return (compare_t(NB_NEIGHBORS, r->pattern, tab));
+    return (compare_patterns(NB_NEIGHBORS, r->pattern, tab));
 }
 
 unsigned int rule_num_changes(const struct rule* r)
