@@ -24,9 +24,9 @@ int compare_cte_array(int n, const unsigned int t1[], unsigned int t2[])
 //Comment tester la longueur d'un tableau ?
 int test_world_init(char opt, int seed1, int seed2, int nb_tests)
 {   
-    printf("#################################################\n");
+    printf("###############################################################\n");
     printf("######--- TEST 1: Initialisation d'un monde aleatoire ---######\n");
-    printf("#################################################\n");
+    printf("###############################################################\n");
     printf("Initialisation d'un monde ...");
     struct world w1;
     w1 = world_init(opt, seed1); //peut-on mettre une exceptions si l'appel de la fonction retourne une erreur et ne veut pas compiler ?
@@ -35,7 +35,7 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests)
     int b = 1;
     for (int i = 0; i < WIDTH * HEIGHT; i++)
     {
-        if(w1.t[i]!=0 || w1.t[i]!=B)
+        if(w1.t[i]!=0 && w1.t[i]!=B)
         {
             b = 0;
         }
@@ -69,6 +69,8 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests)
     return EXIT_SUCCESS;
 }
 
+//Faire un test world display a partir d'un modele deja existant (ou regarder les espaces, les #,...)
+
 /*************** Tests ******************/
 
 int main(int argc, char **argv)
@@ -82,7 +84,7 @@ int main(int argc, char **argv)
 
     switch (atoi(argv[1])) {
     case 1:
-        error = test_world_init('s', 42, 33, 10);
+        error = test_world_init('s', 42, 33, 10); //seed1=42 et seed2=33
         break;
     default:
         error = test_world_init('s', 42, 33, 10);
