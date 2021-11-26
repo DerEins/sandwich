@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdio.h>
 
 #include "rule.h"
@@ -6,21 +7,25 @@
 #define NB_NEIGHBORS 9
 #define MAX_RULE 512
 #define B 16777215
+#define RED 255
+#define GREEN 65280
+#define BLUE 16711680
+#define NB_COLOR 5
 
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change; // the new state of the pixel after
+    unsigned int change[NB_COLOR]; // 5 diff color
 };
 
 struct rule rules[MAX_RULE];
 
-void rules_init() //for the rules of life, we have the following patterns :
+void rules_init() // for the rules of life, we have the following patterns :
 {
     int tmp = 0;
     int n_B = 0;
     for (int i = 0; i < MAX_RULE; ++i) {
-        rules[i].len_changes = 1;
+        rules[i].len_changes = 1; // un choix entre noir et blanc
         tmp = i;
         n_B = 0;
         for (int j = NB_NEIGHBORS; j > 0; --j) {
@@ -35,29 +40,31 @@ void rules_init() //for the rules of life, we have the following patterns :
             tmp = tmp / 2;
 
             if (rules[i].pattern[4] == 0 && n_B == 3) {
-                rules[i].change = B;
+                rules[i].change[0] = B;
+                // on prend la convention, il y a 3 couleurs primaires apres B ou W
+                rules[i].change[1] = RED;
+                rules[i].change[2] = GREEN;
+                rules[i].change[3] = BLUE;
+                rules[i].len_changes = 4;
             } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
-                rules[i].change = 0;
+                rules[i].change[0] = 0;
             } else {
-                rules[i].change = rules[i].pattern[4];
+                rules[i].change[0] = rules[i].pattern[4];
             }
         }
-    }
+    } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
 }
 
 unsigned int rules_count()
 {
-    unsigned int n;
-    n = MAX_RULE; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
-    return n;
+    return 512; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
 }
 
 struct rule* rule_get(unsigned int i)
 {
-    if (i < rules_count()) {
-        return &rules[i];
-    }
-    return NULL;
+    unsigned int max_rule = rules_count();
+    assert(max_rule == 0 || i < max_rule);
+    return &rules[i];
 }
 
 /** The usal modulo for positive number, for the negative number the function return a positive number like for congruence */
@@ -74,7 +81,7 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, u
 {
     for (int m = 0; m < 3; m++) {
         for (int n = 0; n < 3; n++) {
-            int idx_l, idx_c; //index of lines and columns
+            int idx_l, idx_c; // index of lines and columns
             idx_l = modulo(i + (m - 1), HEIGHT);
             idx_c = modulo(j + (n - 1), WIDTH);
             tab[3 * m + n] = w->t[idx_l * WIDTH + idx_c]; // the formule to transform a Matrix in an array
@@ -93,7 +100,7 @@ int compare_t(int n, const unsigned int t1[], unsigned int t2[])
     return 1;
 }
 
-//une amelioration possible est de tester les voisins 1 a 1 et retourner faux des la premiere incoherence
+// une amelioration possible est de tester les voisins 1 a 1 et retourner faux des la premiere incoherence
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
     unsigned int tab[NB_NEIGHBORS];
@@ -103,44 +110,13 @@ int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsi
 
 unsigned int rule_num_changes(const struct rule* r)
 {
-    return r->len_changes; // on est dans l'achiev 1 avec 1 seul change possible
+    return r->len_changes;
 }
-
-// unsigned int rule_change_to(const struct rule* r, unsigned int idx)
-//This function is not use in this case
 
 unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 {
     if (idx < rule_num_changes(r)) {
-        return r->change; //idx used whith more color
+        return r->change[idx]; // idx used whith more color
     } else
-        return 0; //trouver une autre solution
+        return 0; // trouver une autre solution
 }
-
-// #### FUNCTIONS CREATED FOR THE TESTS ####
-// They are in this file because they need an access to the array rules
-
-void rules_init2()
-{
-    struct rule r;
-    for (int i = 0; i < 9; i++) {
-        r.pattern[i] = i;
-    }
-    r.change = 10;
-    rules[0] = r;
-}
-
-/*
-void afficher_rule0_pattern()
-{
-    afficher_tableau(9, rules[0].pattern);
-}
-
-void afficher_rules_pattern()
-{
-    for(int i=0; i<MAX_RULE; i++)
-    {
-        afficher_tableau(9, rules[i].pattern);
-    }
-}
-*/
