@@ -4,8 +4,19 @@
 #include "rule.h"
 #include "world.h"
 
+enum state {
+    EMPTY = 0,
+    SAND = 16777215,
+    GRASS = 65280,
+    RANDOM_COLOR = 4294967295,
+    STATE_COUNT = 4,
+    FIRST_STATE = EMPTY
+};
+
 #define NB_NEIGHBORS 9
-#define MAX_RULE 512
+#define MAX_RULE 513
+
+/*
 #define B 16777215
 #define RED 255
 #define GREEN 65280
@@ -16,7 +27,8 @@
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change[NB_COLOR]; // 5 diff color
+    unsigned int change[STATE_COUNT]; // 5 diff color
+    unsigned int dx, dy; // vector difining the cell move
 };
 
 struct rule rules[MAX_RULE];
@@ -24,38 +36,41 @@ struct rule rules[MAX_RULE];
 void rules_init() // for the rules of life, we have the following patterns :
 {
     int tmp = 0;
-    int n_B = 0;
+
+    for (int i = 0; i < NB_NEIGHBORS; ++i) {
+        rules[0].pattern[i] = RANDOM_COLOR;
+    }
+    rules[0].pattern[4] = EMPTY;
+
     for (int i = 0; i < MAX_RULE; ++i) {
-        rules[i].len_changes = 1; // un choix entre noir et blanc
+        rules[i + 1].len_changes = 1; // un choix entre noir et blanc
         tmp = i;
-        n_B = 0;
         for (int j = NB_NEIGHBORS; j > 0; --j) {
             if (tmp % 2 == 0) {
-                rules[i].pattern[j - 1] = 0;
+                rules[i + 1].pattern[j - 1] = EMPTY;
             } else {
-                rules[i].pattern[j - 1] = B;
-                if (j - 1 != 4) {
-                    ++n_B;
-                }
+                rules[i + 1].pattern[j - 1] = SAND;
             }
             tmp = tmp / 2;
 
-            if (rules[i].pattern[4] == 0 && n_B == 3) {
-                rules[i].change[0] = B;
-                // on prend la convention, il y a 3 couleurs primaires apres B ou W
-                rules[i].change[1] = RED;
-                rules[i].change[2] = GREEN;
-                rules[i].change[3] = BLUE;
-                rules[i].len_changes = 4;
-            } else if (rules[i].pattern[4] == B && (n_B == 0 || n_B == 1 || n_B >= 4)) {
-                rules[i].change[0] = 0;
+            if (rules[i + 1].pattern[4] == SAND) {
+                if (rules[i + 1].pattern[8] == GRASS) {
+                    rules[i + 1].change[0] = GRASS;
+                    rules[i + 1].dx = 0;
+                } else if (rules[i].pattern[8] == EMPTY) {
+                    rules[i + 1].change[0] = SAND;
+                    rules[i + 1].dx = 1;
+                } else {
+                    rules[i + 1].change[0] = rules[i].pattern[4];
+                    rules[i + 1].dx = 0;
+                }
             } else {
                 rules[i].change[0] = rules[i].pattern[4];
             }
+            rules[i].dy = 0;
         }
     } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
 }
-
 unsigned int rules_count()
 {
     return 512; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
@@ -123,4 +138,14 @@ unsigned int rule_change_to(const struct rule* r, unsigned int idx)
         return r->change[idx]; // idx used whith more color
     } else
         return 0; // trouver une autre solution
+}
+
+int rule_change_dx(const struct rule* r, unsigned int idx)
+{
+    return r->dy;
+}
+
+int rule_change_dy(const struct rule* r, unsigned int idx)
+{
+    return r->dx;
 }
