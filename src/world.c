@@ -1,9 +1,10 @@
 #include "world.h"
+#include "rule.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 
-#define B 16777215
-#define NB_STATE 2
+enum state;
 
 /** Create a new world with value 0 (and I want random value)*/
 struct world world_init(char opt, int seed)
@@ -12,20 +13,32 @@ struct world world_init(char opt, int seed)
     struct world w;
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         if (opt == 's') {
-            if (rand() % NB_STATE) {
-                w.t[i] = B;
-            } else {
-                w.t[i] = 0;
+            switch (rand() % STATE_COUNT + 3) {
+            case 1:
+                w.t[i] = EMPTY;
+                break;
+            case 2:
+                w.t[i] = SAND;
+                break;
+            case 3:
+                w.t[i] = EMPTY;
+                break;
+            default:
+                w.t[i] = EMPTY;
             }
         } else {
-            w.t[i] = 0;
+            if (i < WIDTH && i % 2 == 1) {
+                w.t[i] = SAND;
+            } else {
+                w.t[i] = EMPTY;
+            }
         }
     }
     return w;
 }
 
 /** Display a world according to the rules specified*/
-void world_disp(struct world * w)
+void world_disp(struct world* w)
 {
     printf("#\n");
     for (int i = 0; i < WIDTH * HEIGHT; i++) {

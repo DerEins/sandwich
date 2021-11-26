@@ -19,9 +19,6 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned in
 unsigned int chose_color(unsigned int nb_colors)
 {
     unsigned int r = rand();
-    if (r % 100 < 90) {
-        return 0;
-    }
     return r % nb_colors;
 }
 
@@ -62,9 +59,17 @@ int main(int argc, char* argv[])
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
-                for (unsigned int j = 0; j < rules_count() - 1; ++j) {
-                    if (rule_match(&w, rule_get(j), k, l)) {
-                        queue_append(&q, k, l, j);
+                fprintf(stderr, "%d\n", w.t[k * WIDTH + l]);
+                fprintf(stderr, "%d\n", w.t[(k + 1) * WIDTH + l]);
+                for (unsigned int j = 1; j < rules_count() - 1; ++j) {
+                    struct rule* r = rule_get(j);
+                    if (rule_match(&w, r, k, l)) {
+                        unsigned int dx = rule_change_dx(r, 0);
+                        unsigned int dy = rule_change_dy(r, 0);
+                        if (dx || dy) {
+                            queue_append(&q, k, l, 0);
+                        }
+                        queue_append(&q, k + dx, l + dy, j);
                         break;
                     }
                 }
@@ -74,8 +79,8 @@ int main(int argc, char* argv[])
         while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
-            unsigned int n = rule_num_changes(rule_get(change_tmp->idx_rule));
-            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, chose_color(n));
+            unsigned int n = chose_color(rule_num_changes(rule_get(change_tmp->idx_rule)));
+            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, n);
         }
         world_disp(&w);
     }
