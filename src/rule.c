@@ -16,7 +16,7 @@ enum state {
 #define NB_NEIGHBORS 9
 #define MAX_RULE 513
 
-/*
+
 #define B 16777215
 #define RED 255
 #define GREEN 65280
@@ -109,7 +109,7 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i, u
 int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
 {
     for (int i = 0; i < n; i++) {
-        if(t_r[i]!=COULEUR_SPECIALE)
+        if(t_r[i]!=RANDOM_COLOR)
         {
             if (t_r[i] != t_w[i]) {
                 return 0;
