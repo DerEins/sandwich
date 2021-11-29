@@ -20,7 +20,7 @@ struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
     unsigned int change[STATE_COUNT]; // 5 diff color
-    unsigned int dx[STATE_COUNT]; // vector difining the cell move
+    unsigned int dx[STATE_COUNT]; // vector defining the cell move
     unsigned int dy[STATE_COUNT];
 };
 
@@ -34,6 +34,7 @@ void rules_init() // for the rules of life, we have the following patterns :
     for (int i = 0; i < NB_NEIGHBORS; ++i) {
         rules[0].pattern[i] = RANDOM_COLOR;
     }
+    //create a rule that change a every color in black(EMPTY)
     rules[0].pattern[4] = RANDOM_COLOR;
     rules[0].change[0] = EMPTY;
     rules[0].dx[0] = 0;
@@ -68,7 +69,7 @@ void rules_init() // for the rules of life, we have the following patterns :
             }
             rules[i + 1].dy[0] = 0;
         }
-    } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
+    } 
 }
 unsigned int rules_count()
 {
