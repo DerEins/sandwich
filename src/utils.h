@@ -12,4 +12,5 @@ enum state {
     FIRST_STATE = EMPTY
 };
 
+int modulo(int x, int n);
 #endif // __UTILS_H__

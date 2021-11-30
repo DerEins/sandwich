@@ -1,6 +1,7 @@
 #include "../src/world.h"
 #include "../src/rule.h"
 #include "../src/queue.h"
+#include "../src/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -16,27 +17,23 @@ struct position{
 //### COPIE D'UNE PARTIE DU RULE.C INACCESSIBLE ###
 #define MAX_RULE 3
 #define NB_NEIGHBORS 9
-
-enum state {
-    EMPTY = 0,
-    SAND = 16777215,
-    GRASS = 65280,
-    RANDOM_COLOR = 4294967295,
-    STATE_COUNT = 4,
-    FIRST_STATE = EMPTY
-};
+#define MAX_CHANGES 100
 
 
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change[STATE_COUNT]; // 5 diff color
-    unsigned int dx[STATE_COUNT];
-    unsigned int dy[STATE_COUNT]; // vector defining the cell move
+    unsigned int change[MAX_CHANGES]; // 5 diff colors
+    unsigned int dx[MAX_CHANGES];
+    unsigned int dy[MAX_CHANGES]; // vector defining the cell move
 };
 
 struct rule rules[MAX_RULE];
 
+void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_color)
+{
+    w->t[i * WIDTH + j] = rule_change_to(r, idx_color);
+}
 
 //### FIN DE LA COPIE ###
 
@@ -90,29 +87,25 @@ void create_damier(struct world *w)
         {
              w->t[i]=EMPTY;
         }
-       else 
-            w->t[i]=SAND;
-    }
-}
-
-void create_hourglass(struct world *w)
-{
-    for(int i=0; i<HEIGHT*WIDTH; i++)
-    {
-        if(i<WIDTH)
+        else 
         {
             w->t[i]=SAND;
         }
-        else 
-            w->t[i]=EMPTY;
     }
-    w->t[6]=GRASS;
-    w->t[8]=GRASS;
-    /** #
-     *  S S S
-     *  E E E
-     *  G E G
-     * */
+}
+
+void create_basic_world(struct world *w)
+{
+    for(int i=0; i<HEIGHT*WIDTH; i++)
+    {
+        w->t[i]=GRASS;
+    }
+    w->t[4]=SAND;
+    /**
+     *  G G G
+     *  G S G
+     *  G G G
+    */
 }
 
 void create_rule1(struct rule *r)
@@ -122,6 +115,10 @@ void create_rule1(struct rule *r)
     r->len_changes = 2;
     r->change[0] = EMPTY;
     r->change[1] = GRASS;
+    r->dx[0] = 0;
+    r->dy[0] = 0;
+    r->dx[1] = 0;
+    r->dy[1] = 0;
     for(int i = 0; i<NB_NEIGHBORS;i++)
     {
         r->pattern[i]=RANDOM_COLOR;
@@ -129,18 +126,30 @@ void create_rule1(struct rule *r)
     r->pattern[4]=SAND;
 }
 
-void create_rule2(struct rule *r)
+void create_rule_movements(struct rule *r)
 /** Chute libre d'une particule de sable */
 {
-    r->len_changes = 1;
-    r->dx[0] = 1;
-    r->dy[0] = 0;
+    r->len_changes = 7;
     for(int i = 0; i<NB_NEIGHBORS;i++)
     {
         r->pattern[i]=RANDOM_COLOR;
     }
     r->pattern[4]=SAND;
-    r->pattern[4]=EMPTY;
+    for(int j=0; j<4; j++)
+    {
+        r->dx[j] = j%2 ; 
+        r->dy[j] = j/2 ;
+        r->change[j]=SAND;
+    }
+    for(int j=1; j<4; j++)
+    {
+        r->dx[j+3] = -(j%2) ; 
+        r->dy[j+3] = -(j/2) ;
+        r->change[j+3]=SAND;
+    }
+    r->change[0]=GRASS; // quand pas deplacement, SAND devient GRASS
+    //Les regles de deplacements sont les suivantes (avec (dx,dy))
+    //(0,0) (1,0) (0,1) (1,1) (-1,0) (0,-1) (-1,-1)
 }
 
 int test_rule_match(const struct world* w, const struct rule* r, struct position t[])
@@ -162,6 +171,8 @@ int test_rule_match(const struct world* w, const struct rule* r, struct position
 
 void evolution_world(struct world *w, struct rule *r, unsigned int idx_change)
 {
+    struct queue q;
+    queue_init(&q);
     for(int i=0; i<WIDTH*HEIGHT; i++)
     {
         struct position p;
@@ -169,9 +180,31 @@ void evolution_world(struct world *w, struct rule *r, unsigned int idx_change)
         p.y = i%WIDTH;
         if(rule_match(w,r,p.x,p.y))
         {
-            w->t[i]=r->change[idx_change];
+            if(r->dx[idx_change]||r->dx[idx_change])
+            {   
+                int dx = r->dx[idx_change];
+                int dy = r->dx[idx_change];
+                queue_append(&q, p.x, p.y, 1); //la rule avec l'index 1 est celle qui remplace une cellule par EMPTY en (i,j)
+                queue_append(&q, modulo(p.x+dx,HEIGHT), modulo(p.y+dy,WIDTH), 0);
+            }
+            else 
+            {
+                queue_append(&q, p.x, p.y, 0);
+            }
         }
     }
+    while(queue_is_not_empty(&q))
+    {
+        struct change* change_tmp;
+        change_tmp = queue_pop(&q);
+        if(change_tmp->idx_rule==1) //Cas particulier du deplacement avec passage de i,j en EMPTY
+        {
+            w->t[change_tmp->i*WIDTH+change_tmp->j]=EMPTY;
+        }
+        else
+            world_apply_rule(w, r, change_tmp->i, change_tmp->j, idx_change);
+    }
+    
 }
 
 /**void deplacements(struct world *w, struct rule *r, unsigned int idx_change)
@@ -216,24 +249,51 @@ int test_rule_with_random_color()
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w_damier);
-    for(int i=0; i<WIDTH*HEIGHT; i++)
+    printf("Verification des modifications par rapport aux positions des changements ...");
+    for(int i=0; i<nb_p_matchs; i++)
     {
-        if(w_damier.t[i]==SAND)
+        unsigned int index = t_idx_positions[i].x*WIDTH + t_idx_positions[i].y;
+        if(w_damier.t[index]!=GRASS)
         {
             printf("Erreur : Au moins un changement n'a pas été effectué. \n");
             exit(EXIT_FAILURE);
-        }
+        } //ajouter un else qui permet de tester les autres valeurs
     }
+    printf("FAIT\n");
+    printf("\nTest d'utilisation de COLOR_RANDOM termine avec succes. \n \n");
+    return EXIT_SUCCESS;
+}
+
+int test_deplacements()
+{
+    printf("#################################################################################\n");
+    printf("######--- TEST 2: Test des règles de déplacements dans un monde simple  ---######\n");
+    printf("#################################################################################\n");
+    printf("Initialisation de la regle de deplacement ...");
+    struct rule r;
+    create_rule_movements(&r);
+    printf("FAIT \n");
+    printf("Creation d'un monde simple...");
+    struct world w;
+    create_basic_world(&w);
+    printf("FAIT \n");
+    world_disp(&w);
+    printf("Rechercher du nombres de positions où s'applique la règle avec leurs indices...\n");
+    struct position t_idx_positions[WIDTH*HEIGHT];
+    int nb_p_matchs = test_rule_match(&w, &r, t_idx_positions);
+    printf("Nombre de match = %d \n",nb_p_matchs);
+    printf("Les positions sont: ");
+    afficher_tableau_positions(nb_p_matchs,t_idx_positions);
+    printf("Application des changements sur le monde ...");
+    evolution_world(&w,&r,3); //the SAND is replace by GRASS
+    printf("FAIT \n");
+    printf("Le nouveau monde :\n");
+    world_disp(&w);
     return EXIT_SUCCESS;
 }
 
 int main(int argc, char **argv)
 {
-    printf("Creation d'un mini sablier...");
-    struct world w_sablier;
-    create_hourglass(&w_sablier);
-    printf("FAIT \n");
-    world_disp(&w_sablier);
     if (argc != 2) {
         printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
         exit(EXIT_FAILURE);
@@ -244,6 +304,9 @@ int main(int argc, char **argv)
     switch (atoi(argv[1])) {
     case 1:
         error = test_rule_with_random_color();
+        break;
+    case 2:
+        error = test_deplacements();
         break;
     default:
         error = test_rule_with_random_color();

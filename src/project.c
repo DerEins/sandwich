@@ -73,7 +73,7 @@ int main(int argc, char* argv[])
                         if (dx || dy) {
                             queue_append(&q, k, l, 0);
                         }
-                        queue_append(&q, (k + dx) % HEIGHT, (l + dy) % WIDTH, j);
+                        queue_append(&q, modulo(k + dx,HEIGHT), modulo(l + dy, WIDTH), j);
                         break;
                     }
                 }

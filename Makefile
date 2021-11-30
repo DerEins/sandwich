@@ -23,7 +23,8 @@ test_rule :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_rule.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule rule.o world.o test_rule.o
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/queue.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule queue.o rule.o world.o test_rule.o
 
 test_world :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 

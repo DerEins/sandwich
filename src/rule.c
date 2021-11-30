@@ -15,13 +15,14 @@ enum state;
 #define GREEN 65280
 #define BLUE 16711680
 #define NB_COLOR 5
+#define MAX_CHANGES 100
 
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change[STATE_COUNT]; // 5 diff color
-    unsigned int dx[STATE_COUNT]; // vector defining the cell move
-    unsigned int dy[STATE_COUNT];
+    unsigned int change[MAX_CHANGES]; // 5 diff colors
+    unsigned int dx[MAX_CHANGES]; // vector defining the cell move
+    unsigned int dy[MAX_CHANGES];
 };
 
 struct rule rules[MAX_RULE];
