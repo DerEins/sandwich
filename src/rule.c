@@ -8,100 +8,87 @@
 enum state;
 
 #define NB_NEIGHBORS 9
-#define MAX_RULE 19684
+#define MAX_RULE 5
+#define MAX_STATE 50
 
-#define B 16777215
-#define RED 255
-#define GREEN 65280
-#define BLUE 16711680
-#define NB_COLOR 5
-#define MAX_CHANGES 100
-
+struct next_state {
+    unsigned int next_color, dx, dy;
+};
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
     unsigned int len_changes;
-    unsigned int change[MAX_CHANGES]; // 5 diff colors
-    unsigned int dx[MAX_CHANGES]; // vector defining the cell move
-    unsigned int dy[MAX_CHANGES];
+    struct next_state next_state[MAX_STATE];
 };
 
 struct rule rules[MAX_RULE];
 
-unsigned int num_rules = 0;
-
-void gen_pattern(int i, int idx_rule)
-{
-    int tmp = i;
-    for (int j = NB_NEIGHBORS; j > 0; --j) {
-        if (tmp % 3 == 0) {
-            rules[idx_rule].pattern[j - 1] = EMPTY;
-        } else if (tmp % 3 == 1) {
-            rules[idx_rule].pattern[j - 1] = SAND;
-        } else {
-            rules[idx_rule].pattern[j - 1] = GRASS;
-        }
-        tmp = tmp / 3;
-    }
-}
 void rules_init() // for the rules of life, we have the following patterns :
 {
-    int idx_rule = 1;
-    rules[0].len_changes = 1;
-    for (int i = 0; i < NB_NEIGHBORS; ++i) {
-        rules[0].pattern[i] = RANDOM_COLOR;
-    }
-    // create a rule that change a every color in black(EMPTY)
-    rules[0].pattern[4] = RANDOM_COLOR;
-    rules[0].change[0] = EMPTY;
-    rules[0].dx[0] = 0;
-    rules[0].dy[0] = 0;
-
-    for (int i = 1; i < MAX_RULE + 1; ++i) {
-        rules[idx_rule].len_changes = 1; // un choix entre noir et blanc
-        gen_pattern(i, idx_rule);
-        if (rules[idx_rule].pattern[4] == SAND) {
-            if (rules[idx_rule].pattern[7] == GRASS && rules[idx_rule].pattern[5] == GRASS && rules[idx_rule].pattern[3] == GRASS) {
-                rules[idx_rule].len_changes = 1;
-                rules[idx_rule].change[0] = GRASS;
-                rules[idx_rule].dx[0] = 0;
-                rules[idx_rule].dy[0] = 0;
-                ++idx_rule;
-            } else if (rules[idx_rule].pattern[7] == EMPTY) {
-                rules[idx_rule].len_changes = 1;
-                rules[idx_rule].change[0] = SAND;
-                rules[idx_rule].dx[0] = 1;
-                rules[idx_rule].dy[0] = 0;
-                ++idx_rule;
-            } else if (rules[idx_rule].pattern[7] == SAND) {
-                if (rules[idx_rule].pattern[6] == EMPTY && rules[idx_rule].pattern[8] != EMPTY) {
-                    rules[idx_rule].len_changes = 1;
-                    rules[idx_rule].dy[0] = -1;
-                } else if (rules[idx_rule].pattern[6] != EMPTY && rules[idx_rule].pattern[8] == EMPTY) {
-                    rules[idx_rule].len_changes = 1;
-                    rules[idx_rule].dy[0] = 1;
-                } else if (rules[idx_rule].pattern[6] == EMPTY && rules[idx_rule].pattern[8] == EMPTY) {
-                    rules[idx_rule].len_changes = 2;
-                    rules[idx_rule].change[1] = SAND;
-                    rules[idx_rule].dx[1] = 0;
-                    rules[idx_rule].dy[0] = 1;
-                    rules[idx_rule].dy[1] = -1;
-                } else {
-                    rules[idx_rule].len_changes = 1;
-                    rules[idx_rule].dx[0] = 0;
-                    rules[idx_rule].dy[0] = 0;
-                }
-                rules[idx_rule].change[0] = SAND;
-                rules[idx_rule].dx[0] = 0;
-                ++idx_rule;
+    for (int idx_rule = 0; idx_rule < MAX_RULE; ++idx_rule) {
+        for (int i = 0; i < 6; ++i) {
+            if (i != 4) {
+                rules[idx_rule].pattern[i] = RANDOM_COLOR;
             }
-        } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
+        }
+
+        if (idx_rule == 0) {
+            rules[idx_rule].len_changes = 1;
+            for (int i = 4; i < 9; ++i) {
+                rules[idx_rule].pattern[i] = RANDOM_COLOR;
+            }
+            rules[idx_rule].next_state[0].next_color = EMPTY;
+            rules[idx_rule].next_state[0].dx = 0;
+            rules[idx_rule].next_state[0].dy = 0;
+        } else {
+            rules[idx_rule].pattern[4] = SAND;
+            switch (idx_rule) {
+            case 1:
+                rules[idx_rule].len_changes = 1;
+                rules[idx_rule].pattern[6] = RANDOM_COLOR;
+                rules[idx_rule].pattern[7] = EMPTY;
+                rules[idx_rule].pattern[8] = RANDOM_COLOR;
+                rules[idx_rule].next_state[0].next_color = SAND;
+                rules[idx_rule].next_state[0].dx = 1;
+                rules[idx_rule].next_state[0].dy = 0;
+                break;
+            case 2:
+                rules[idx_rule].len_changes = 1;
+                rules[idx_rule].pattern[6] = EMPTY;
+                rules[idx_rule].pattern[7] = SAND;
+                rules[idx_rule].pattern[8] = SAND;
+                rules[idx_rule].next_state[0].next_color = SAND;
+                rules[idx_rule].next_state[0].dx = 0;
+                rules[idx_rule].next_state[0].dy = -1;
+                break;
+            case 3:
+                rules[idx_rule].len_changes = 2;
+                rules[idx_rule].pattern[6] = EMPTY;
+                rules[idx_rule].pattern[7] = SAND;
+                rules[idx_rule].pattern[8] = EMPTY;
+                rules[idx_rule].next_state[0].next_color = SAND;
+                rules[idx_rule].next_state[1].next_color = SAND;
+                rules[idx_rule].next_state[0].dx = 0;
+                rules[idx_rule].next_state[0].dy = 1;
+                rules[idx_rule].next_state[1].dx = 0;
+                rules[idx_rule].next_state[1].dy = -1;
+                break;
+            case 4:
+                rules[idx_rule].len_changes = 1;
+                rules[idx_rule].pattern[6] = SAND;
+                rules[idx_rule].pattern[7] = SAND;
+                rules[idx_rule].pattern[8] = EMPTY;
+                rules[idx_rule].next_state[0].next_color = SAND;
+                rules[idx_rule].next_state[0].dx = 0;
+                rules[idx_rule].next_state[0].dy = 1;
+                break;
+            }
+        }
     }
-    num_rules = idx_rule;
 }
 
 unsigned int rules_count()
 {
-    return num_rules; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
+    return MAX_RULE; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
 }
 
 struct rule* rule_get(unsigned int i)
@@ -162,7 +149,7 @@ unsigned int rule_num_changes(const struct rule* r)
 unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 {
     if (idx < rule_num_changes(r)) {
-        return r->change[idx]; // idx used whith more color
+        return r->next_state[idx].next_color; // idx used whith more color
     } else
         return 0; // trouver une autre solution
 }
@@ -171,13 +158,13 @@ int rule_change_dx(const struct rule* r, unsigned int idx)
 {
     unsigned int max_change = rule_num_changes(r);
     assert(max_change == 0 || idx < max_change);
-    // fprintf(stderr, "dx: %d \n", r->dx[idx]);
-    return r->dx[idx];
+    // fprintf(stderr, "dx: %d \n", r->next_state[idx].dx);
+    return r->next_state[idx].dx;
 }
 
 int rule_change_dy(const struct rule* r, unsigned int idx)
 {
     unsigned int max_change = rule_num_changes(r);
     assert(max_change == 0 || idx < max_change);
-    return r->dy[idx];
+    return r->next_state[idx].dy;
 }

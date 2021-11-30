@@ -10,3 +10,4 @@ test_queue
 test_rule
 *.o
 sdl
+animation
