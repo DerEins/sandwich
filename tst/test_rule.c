@@ -32,7 +32,7 @@ struct rule {
     unsigned int len_changes;
     unsigned int change[STATE_COUNT]; // 5 diff color
     unsigned int dx[STATE_COUNT];
-    unsigned int dy[STATE_COUNT]; // vector difining the cell move
+    unsigned int dy[STATE_COUNT]; // vector defining the cell move
 };
 
 struct rule rules[MAX_RULE];
@@ -117,6 +117,7 @@ void create_hourglass(struct world *w)
 
 void create_rule1(struct rule *r)
 /** Change le SAND (blanc) en EMPTY(noir, idx=0) ou en GRASS(vert,idx=1) */ 
+/** test d'utilisation de RANDOM_COLOR comme couleur bonus ie uen couleur qui match avec toutes les couleurs*/
 {
     r->len_changes = 2;
     r->change[0] = EMPTY;
@@ -173,7 +174,7 @@ void evolution_world(struct world *w, struct rule *r, unsigned int idx_change)
     }
 }
 
-void deplacements(struct world *w, struct rule *r, unsigned int idx_change)
+/**void deplacements(struct world *w, struct rule *r, unsigned int idx_change)
 {
     struct queue q;
     queue_init(&q);
@@ -188,14 +189,16 @@ void deplacements(struct world *w, struct rule *r, unsigned int idx_change)
         }
     }
 
-}
+}*/
 
-int main()
+int test_rule_with_random_color()
 {
+    printf("##################################################################################\n");
+    printf("######--- TEST 1: Test d'une règle utilisant RANDOM_COLOR sur un damier  ---######\n");
+    printf("##################################################################################\n");
     printf("Initialisation des regles ...");
     struct rule r;
-    create_rule1(&r);
-    rules[0]=r;
+    create_rule1(&r); //
     printf("FAIT \n");
     printf("Creation d'un damier...");
     struct world w_damier;
@@ -209,14 +212,42 @@ int main()
     printf("Les positions sont: ");
     afficher_tableau_positions(nb_p_matchs,t_idx_positions);
     printf("Application des changements sur le monde ...");
-    evolution_world(&w_damier,&r,1);
+    evolution_world(&w_damier,&r,1); //the SAND is replace by GRASS
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w_damier);
+    for(int i=0; i<WIDTH*HEIGHT; i++)
+    {
+        if(w_damier.t[i]==SAND)
+        {
+            printf("Erreur : Au moins un changement n'a pas été effectué. \n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+int main(int argc, char **argv)
+{
     printf("Creation d'un mini sablier...");
     struct world w_sablier;
     create_hourglass(&w_sablier);
     printf("FAIT \n");
     world_disp(&w_sablier);
+    if (argc != 2) {
+        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
+        exit(EXIT_FAILURE);
+    }
+
+    int error = EXIT_FAILURE;
+
+    switch (atoi(argv[1])) {
+    case 1:
+        error = test_rule_with_random_color();
+        break;
+    default:
+        error = test_rule_with_random_color();
+    }
+    return error;
     return 0;
 }
