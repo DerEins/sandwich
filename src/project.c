@@ -56,15 +56,13 @@ int main(int argc, char* argv[])
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
     for (int i = 0; i < nb_pictures; i++) {
-        if ((i % 4) == 1)
-            w.t[WIDTH / 2] = SAND;
         struct queue q;
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
                 // fprintf(stderr, "%d\n", w.t[k * WIDTH + l]);
                 // fprintf(stderr, "%d\n", w.t[(k + 1) * WIDTH + l]);
-                for (unsigned int j = 1; j < rules_count() - 1; ++j) {
+                for (unsigned int j = 1; j < rules_count(); ++j) {
                     struct rule* r = rule_get(j);
                     if (rule_match(&w, r, k, l)) {
                         unsigned int idx_move = chose_change(rule_num_changes(r));
