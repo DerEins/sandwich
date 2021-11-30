@@ -26,10 +26,25 @@ struct rule {
 
 struct rule rules[MAX_RULE];
 
+unsigned int num_rules = 0;
+
+void gen_pattern(int i, int idx_rule)
+{
+    int tmp = i;
+    for (int j = NB_NEIGHBORS; j > 0; --j) {
+        if (tmp % 3 == 0) {
+            rules[idx_rule].pattern[j - 1] = EMPTY;
+        } else if (tmp % 3 == 1) {
+            rules[idx_rule].pattern[j - 1] = SAND;
+        } else {
+            rules[idx_rule].pattern[j - 1] = GRASS;
+        }
+        tmp = tmp / 3;
+    }
+}
 void rules_init() // for the rules of life, we have the following patterns :
 {
-    int tmp = 0;
-
+    int idx_rule = 1;
     rules[0].len_changes = 1;
     for (int i = 0; i < NB_NEIGHBORS; ++i) {
         rules[0].pattern[i] = RANDOM_COLOR;
@@ -38,41 +53,54 @@ void rules_init() // for the rules of life, we have the following patterns :
     rules[0].change[0] = EMPTY;
     rules[0].dx[0] = 0;
     rules[0].dy[0] = 0;
-    for (int i = 0; i < MAX_RULE; ++i) {
-        rules[i + 1].len_changes = 1; // un choix entre noir et blanc
-        tmp = i;
-        for (int j = NB_NEIGHBORS; j > 0; --j) {
-            if (tmp % 3 == 0) {
-                rules[i + 1].pattern[j - 1] = EMPTY;
-            } else if (tmp % 3 == 1) {
-                rules[i + 1].pattern[j - 1] = SAND;
-            } else {
-                rules[i + 1].pattern[j - 1] = GRASS;
-            }
-            tmp = tmp / 3;
 
-            if (rules[i + 1].pattern[4] == SAND) {
-                if (rules[i + 1].pattern[7] == GRASS) {
-                    rules[i + 1].change[0] = GRASS;
-                    rules[i + 1].dx[0] = 1;
-                } else if (rules[i].pattern[7] == EMPTY) {
-                    rules[i + 1].change[0] = SAND;
-                    rules[i + 1].dx[0] = 0;
+    for (int i = 1; i < MAX_RULE + 1; ++i) {
+        rules[idx_rule].len_changes = 1; // un choix entre noir et blanc
+        gen_pattern(i, idx_rule);
+        if (rules[idx_rule].pattern[4] == SAND) {
+            if (rules[idx_rule].pattern[7] == GRASS && rules[idx_rule].pattern[5] == GRASS && rules[idx_rule].pattern[3] == GRASS) {
+                rules[idx_rule].len_changes = 1;
+                rules[idx_rule].change[0] = GRASS;
+                rules[idx_rule].dx[0] = 0;
+                rules[idx_rule].dy[0] = 0;
+                ++idx_rule;
+            } else if (rules[idx_rule].pattern[7] == EMPTY) {
+                rules[idx_rule].len_changes = 1;
+                rules[idx_rule].change[0] = SAND;
+                rules[idx_rule].dx[0] = 1;
+                rules[idx_rule].dy[0] = 0;
+                ++idx_rule;
+            } else if (rules[idx_rule].pattern[7] == SAND) {
+                if (rules[idx_rule].pattern[6] == EMPTY && rules[idx_rule].pattern[8] != EMPTY) {
+                    rules[idx_rule].len_changes = 1;
+                    rules[idx_rule].dy[0] = -1;
+                } else if (rules[idx_rule].pattern[6] != EMPTY && rules[idx_rule].pattern[8] == EMPTY) {
+                    rules[idx_rule].len_changes = 1;
+                    rules[idx_rule].dy[0] = 1;
+                } else if (rules[idx_rule].pattern[6] == EMPTY && rules[idx_rule].pattern[8] == EMPTY) {
+                    rules[idx_rule].len_changes = 2;
+                    rules[idx_rule].change[1] = SAND;
+                    rules[idx_rule].dx[1] = 0;
+                    rules[idx_rule].dy[0] = 1;
+                    rules[idx_rule].dy[1] = -1;
                 } else {
-                    rules[i + 1].change[0] = rules[i].pattern[4];
-                    rules[i + 1].dx[0] = 0;
+                    rules[idx_rule].len_changes = 1;
+                    rules[idx_rule].dx[0] = 0;
+                    rules[idx_rule].dy[0] = 0;
                 }
-            } else {
-                rules[i + 1].change[0] = rules[i + 1].pattern[4];
-                rules[i + 1].dx[0] = 0;
+                rules[idx_rule].change[0] = SAND;
+                rules[idx_rule].dx[0] = 0;
+                ++idx_rule;
             }
-            rules[i + 1].dy[0] = 0;
-        }
-    } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
+
+        } // ajouter un convention qui dit que si il y a des couleurs alors redeviennent noires juste apres
+    }
+    num_rules = idx_rule;
 }
+
 unsigned int rules_count()
 {
-    return MAX_RULE; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
+    return num_rules; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
 }
 
 struct rule* rule_get(unsigned int i)
@@ -142,7 +170,7 @@ int rule_change_dx(const struct rule* r, unsigned int idx)
 {
     unsigned int max_change = rule_num_changes(r);
     assert(max_change == 0 || idx < max_change);
-    fprintf(stderr, "dx: %d \n", r->dx[idx]);
+    // fprintf(stderr, "dx: %d \n", r->dx[idx]);
     return r->dx[idx];
 }
 

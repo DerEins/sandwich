@@ -21,14 +21,16 @@ struct world world_init(char opt, int seed)
                 w.t[i] = SAND;
                 break;
             case 3:
-                w.t[i] = EMPTY;
+                w.t[i] = GRASS;
                 break;
             default:
                 w.t[i] = EMPTY;
             }
         } else {
-            if (i < WIDTH && i % 2 == 1) {
+            if (i == WIDTH / 2) {
                 w.t[i] = SAND;
+            } else if (i >= WIDTH * (HEIGHT - 1)) {
+                w.t[i] = GRASS;
             } else {
                 w.t[i] = EMPTY;
             }

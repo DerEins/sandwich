@@ -32,4 +32,4 @@ test_world :
 	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o test_world.o
 
 clean:
-	rm -f src/project test_* *.o vgcore*
+	rm -f src/project test_* *.o vgcore* animation
