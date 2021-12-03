@@ -46,6 +46,19 @@ void afficher_tableau(int n, unsigned int *t)
     printf("\n");
 }
 
+int comparer_monde(struct world *w1, struct world *w2)
+{
+    for(int i=0; i<WIDTH*HEIGHT; ++i)
+    {
+        if(w1->t[i]!=w2->t[i])
+        {
+            //printf("Les mondes ne sont pas identiques !\n");
+            return 0;
+        }
+    }
+    return 1;
+}
+
 void afficher_tableau_positions(int n, struct position *t)
 {
     for(int i=0; i<n; i++)
@@ -108,6 +121,24 @@ void create_basic_world(struct world *w)
     */
 }
 
+void world_expected_after_movement(struct world *initial_world, struct world *final_world, int dx, int dy, unsigned int i, unsigned int j)
+{
+    if (dx==0 && dy==0)
+    {
+        printf("Il n'y a pas de movement");
+    }
+    else 
+    {
+        for(int k=0; k<WIDTH*HEIGHT; ++k)
+        {
+            final_world->t[k]=initial_world->t[k];
+        }
+        unsigned int idx_mov = modulo(i+dx, HEIGHT)*WIDTH + modulo(j+dy, WIDTH);
+        final_world->t[idx_mov]= 1;//final_world->t[i*WIDTH+j]
+        final_world->t[i*WIDTH+j] = 0;//EMPTY
+    } 
+}
+
 void create_rule1(struct rule *r)
 /** Change le SAND (blanc) en EMPTY(noir, idx=0) ou en GRASS(vert,idx=1) */ 
 /** test d'utilisation de RANDOM_COLOR comme couleur bonus ie uen couleur qui match avec toutes les couleurs*/
@@ -129,7 +160,7 @@ void create_rule1(struct rule *r)
 void create_rule_movements(struct rule *r)
 /** Chute libre d'une particule de sable */
 {
-    r->len_changes = 7;
+    r->len_changes = 9;
     for(int i = 0; i<NB_NEIGHBORS;i++)
     {
         r->pattern[i]=RANDOM_COLOR;
@@ -148,8 +179,27 @@ void create_rule_movements(struct rule *r)
         r->change[j+3]=SAND;
     }
     r->change[0]=GRASS; // quand pas deplacement, SAND devient GRASS
+    r->dx[7]= 2;
+    r->dy[7]= 0; 
+    r->dx[8]= 0;
+    r->dy[8]= 2; 
     //Les regles de deplacements sont les suivantes (avec (dx,dy))
-    //(0,0) (1,0) (0,1) (1,1) (-1,0) (0,-1) (-1,-1)
+    //(0,0) (1,0) (0,1) (1,1) (-1,0) (0,-1) (-1,-1) (2,0) (0,2)
+}
+
+
+
+/**Prend en argument le pointeur vers une règle, len_changes de la rule, un tableau de taille len_changes et retourne tous les déplacements d'une règle*/
+void print_moves_rule(struct rule *r, unsigned int len_changes, struct position *t)
+{
+    for(unsigned int i=0; i<len_changes; ++i)
+    {
+        struct position p;
+        p.x = r->dx[i];
+        p.y = r->dy[i];
+        t[i] = p;
+    }
+    afficher_tableau_positions(len_changes, t);
 }
 
 int test_rule_match(const struct world* w, const struct rule* r, struct position t[])
@@ -264,6 +314,7 @@ int test_rule_with_random_color()
     return EXIT_SUCCESS;
 }
 
+
 int test_deplacements()
 {
     printf("#################################################################################\n");
@@ -273,6 +324,9 @@ int test_deplacements()
     struct rule r;
     create_rule_movements(&r);
     printf("FAIT \n");
+    printf("Les déplacements de la règle crée sont les suivants : \n");
+    struct position t_moves[r.len_changes];
+    print_moves_rule(&r, r.len_changes,t_moves);
     printf("Creation d'un monde simple...");
     struct world w;
     create_basic_world(&w);
@@ -284,6 +338,14 @@ int test_deplacements()
     printf("Nombre de match = %d \n",nb_p_matchs);
     printf("Les positions sont: ");
     afficher_tableau_positions(nb_p_matchs,t_idx_positions);
+
+    for(unsigned int j=1; j<r.len_changes; ++j)
+    {
+        struct world w_expected;
+        world_expected_after_movement(&w, &w_expected, t_moves[j].x, t_moves[j].y, 1, 1);
+        world_disp(&w_expected);
+    }
+
     printf("Application des changements sur le monde ...");
     evolution_world(&w,&r,3); //the SAND is replace by GRASS
     printf("FAIT \n");
