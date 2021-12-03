@@ -1,8 +1,6 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
-#include "world.h"
-
 enum state {
     EMPTY = 13603939,
     SAND = 5293812,
@@ -12,5 +10,7 @@ enum state {
     FIRST_STATE = EMPTY
 };
 
+/** The usal modulo for positive number, for the negative number the function return a positive number like for congruence */
 int modulo(int x, int n);
+
 #endif // __UTILS_H__

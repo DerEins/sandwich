@@ -12,7 +12,8 @@ enum state;
 #define MAX_STATE 50
 
 struct next_state {
-    unsigned int next_color, dx, dy;
+    unsigned int next_color;
+    int dx, dy;
 };
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
@@ -96,15 +97,6 @@ struct rule* rule_get(unsigned int i)
     unsigned int max_rule = rules_count();
     assert(max_rule == 0 || i < max_rule);
     return &rules[i];
-}
-
-/** The usal modulo for positive number, for the negative number the function return a positive number like for congruence */
-int modulo(int x, int n)
-{
-    if (x < 0) {
-        return n + (x % n);
-    } else
-        return x % n;
 }
 
 /** Give the 8 neighbours of a cell and put them in an array of 9 cells */

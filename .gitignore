@@ -8,6 +8,7 @@ vgcore.*
 test_project 
 test_queue
 test_rule
+test_world
 *.o
 sdl
 animation
