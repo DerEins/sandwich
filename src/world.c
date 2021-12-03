@@ -27,9 +27,9 @@ struct world world_init(char opt, int seed)
                 w.t[i] = EMPTY;
             }
         } else {
-            if (i == WIDTH / 2) {
+            if (i < WIDTH *3 && rand()%5==0) {
                 w.t[i] = SAND;
-            } else if (i >= WIDTH * (HEIGHT - 1)) {
+            } else if (i >= (WIDTH * (HEIGHT - 1) + (WIDTH)/2) || (i >= WIDTH * (HEIGHT - 1) && i<= (WIDTH * (HEIGHT - 1)+ WIDTH/3))) {
                 w.t[i] = GRASS;
             } else {
                 w.t[i] = EMPTY;

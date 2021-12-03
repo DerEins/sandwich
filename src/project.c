@@ -12,9 +12,18 @@ struct world world_init();
 
 void world_disp(struct world* w);
 
-void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_color)
+void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_change)
 {
-    w->t[i * WIDTH + j] = rule_change_to(r, idx_color);
+    unsigned int dx = rule_change_dx(r, idx_change);
+    unsigned int dy = rule_change_dy(r, idx_change);
+    if (dx || dy) {
+        w->t[i * WIDTH + j] = EMPTY;
+        w->t[modulo(i+dx,HEIGHT) * WIDTH + modulo(j+dy, WIDTH)] = rule_change_to(r, idx_change);
+    }
+    else 
+    {
+        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);   
+    }
 }
 
 unsigned int chose_change(unsigned int nb_change)
@@ -62,13 +71,7 @@ int main(int argc, char* argv[])
                 for (unsigned int j = 1; j < rules_count(); ++j) {
                     struct rule* r = rule_get(j);
                     if (rule_match(&w, r, k, l)) {
-                        unsigned int idx_move = chose_change(rule_num_changes(r));
-                        unsigned int dx = rule_change_dx(r, idx_move);
-                        unsigned int dy = rule_change_dy(r, idx_move);
-                        if (dx || dy) {
-                            queue_append(&q, k, l, 0);
-                        }
-                        queue_append(&q, modulo(k + dx,HEIGHT), modulo(l + dy, WIDTH), j);
+                        queue_append(&q, k, l, j);
                         break;
                     }
                 }
@@ -78,8 +81,8 @@ int main(int argc, char* argv[])
         while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
-            unsigned int idx_color = chose_change(rule_num_changes(rule_get(change_tmp->idx_rule)));
-            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, idx_color);
+            unsigned int idx_change = chose_change(rule_num_changes(rule_get(change_tmp->idx_rule)));
+            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, idx_change);
         }
         world_disp(&w);
     }
