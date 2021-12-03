@@ -125,7 +125,7 @@ void world_expected_after_movement(struct world *initial_world, struct world *fi
 {
     if (dx==0 && dy==0)
     {
-        printf("Il n'y a pas de movement");
+        printf("Il n'y a pas de mouvements !\n");
     }
     else 
     {
@@ -134,8 +134,8 @@ void world_expected_after_movement(struct world *initial_world, struct world *fi
             final_world->t[k]=initial_world->t[k];
         }
         unsigned int idx_mov = modulo(i+dx, HEIGHT)*WIDTH + modulo(j+dy, WIDTH);
-        final_world->t[idx_mov]= 1;//final_world->t[i*WIDTH+j]
-        final_world->t[i*WIDTH+j] = 0;//EMPTY
+        final_world->t[idx_mov]= 0; //final_world->t[i*WIDTH+j];
+        final_world->t[i*WIDTH+j] = 1; // EMPTY;
     } 
 }
 
@@ -230,17 +230,13 @@ void evolution_world(struct world *w, struct rule *r, unsigned int idx_change)
         p.y = i%WIDTH;
         if(rule_match(w,r,p.x,p.y))
         {
-            if(r->dx[idx_change]||r->dx[idx_change])
-            {   
-                int dx = r->dx[idx_change];
-                int dy = r->dx[idx_change];
+            int dx = r->dx[idx_change];
+            int dy = r->dx[idx_change];
+            if(dx||dy)
+            {  
                 queue_append(&q, p.x, p.y, 1); //la rule avec l'index 1 est celle qui remplace une cellule par EMPTY en (i,j)
-                queue_append(&q, modulo(p.x+dx,HEIGHT), modulo(p.y+dy,WIDTH), 0);
             }
-            else 
-            {
-                queue_append(&q, p.x, p.y, 0);
-            }
+            queue_append(&q, modulo(p.x+dx,HEIGHT), modulo(p.y+dy,WIDTH), 0);
         }
     }
     while(queue_is_not_empty(&q))
@@ -252,27 +248,12 @@ void evolution_world(struct world *w, struct rule *r, unsigned int idx_change)
             w->t[change_tmp->i*WIDTH+change_tmp->j]=EMPTY;
         }
         else
+        {
             world_apply_rule(w, r, change_tmp->i, change_tmp->j, idx_change);
+        }     
     }
     
 }
-
-/**void deplacements(struct world *w, struct rule *r, unsigned int idx_change)
-{
-    struct queue q;
-    queue_init(&q);
-    for(int i=0; i<WIDTH*HEIGHT; i++)
-    {
-        struct position p;
-        p.x = i/WIDTH;
-        p.y = i%WIDTH;
-        if(rule_match(w,r,p.x,p.y))
-        {
-            w->t[i]=r->change[idx_change];
-        }
-    }
-
-}*/
 
 int test_rule_with_random_color()
 {
@@ -341,13 +322,22 @@ int test_deplacements()
 
     for(unsigned int j=1; j<r.len_changes; ++j)
     {
+        create_basic_world(&w);
         struct world w_expected;
         world_expected_after_movement(&w, &w_expected, t_moves[j].x, t_moves[j].y, 1, 1);
+        evolution_world(&w,&r,j);
+        printf("le monde généré\n");
+        world_disp(&w);
+        printf("le monde attendu\n");
         world_disp(&w_expected);
+        if(comparer_monde(&w, &w)!=1)
+        {
+            printf("Le déplacement %d ne correspond pas à celui attendu.\n",j);
+        }
     }
 
     printf("Application des changements sur le monde ...");
-    evolution_world(&w,&r,3); //the SAND is replace by GRASS
+     //the SAND is replace by GRASS
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w);
