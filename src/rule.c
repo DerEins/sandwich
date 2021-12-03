@@ -23,7 +23,7 @@ struct rule {
 
 struct rule rules[MAX_RULE];
 
-void rules_init() // for the rules of life, we have the following patterns :
+void rules_init() // règles pour générer un tas de sable
 {
     for (int idx_rule = 0; idx_rule < MAX_RULE; ++idx_rule) {
         for (int i = 0; i < 6; ++i) {
@@ -89,7 +89,7 @@ void rules_init() // for the rules of life, we have the following patterns :
 
 unsigned int rules_count()
 {
-    return MAX_RULE; // the real formule is : 2^(nb of neighbors) for the rule represented by a pattern
+    return MAX_RULE; //depend du rules_init()
 }
 
 struct rule* rule_get(unsigned int i)
@@ -125,12 +125,12 @@ int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
     return 1;
 }
 
-// une amelioration possible est de tester les voisins 1 a 1 et retourner faux des la premiere incoherence
+
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
     unsigned int tab[NB_NEIGHBORS];
     find_neighbors(tab, w, i, j);
-    return (compare_patterns(NB_NEIGHBORS, r->pattern, tab));
+    return (compare_patterns(NB_NEIGHBORS, r->pattern, tab)); 
 }
 
 unsigned int rule_num_changes(const struct rule* r)
@@ -143,7 +143,7 @@ unsigned int rule_change_to(const struct rule* r, unsigned int idx)
     if (idx < rule_num_changes(r)) {
         return r->next_state[idx].next_color; // idx used whith more color
     } else
-        return 0; // trouver une autre solution
+        return 0; // 0 signifie une erreur ici
 }
 
 int rule_change_dx(const struct rule* r, unsigned int idx)

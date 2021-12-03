@@ -22,12 +22,12 @@ struct next_state {
     int dx, dy;
 };
 struct rule {
-    unsigned int pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
+    unsigned int pattern[NB_NEIGHBORS]; 
     unsigned int len_changes;
     struct next_state next_state[MAX_STATE];
 };
 
-//### COPIE D'UNE PARTIE DU RULE.C INACCESSIBLE ###
+//### COPIE D'UNE PARTIE DES .C INACCESSIBLES ###
 
 void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_color)
 {
@@ -48,7 +48,7 @@ int comparer_monde(struct world* w1, struct world* w2)
 {
     for (int i = 0; i < WIDTH * HEIGHT; ++i) {
         if (w1->t[i] != w2->t[i]) {
-            // printf("Les mondes ne sont pas identiques !\n");
+            printf("Les mondes ne sont pas identiques !\n");
             return 0;
         }
     }
@@ -61,27 +61,6 @@ void afficher_tableau_positions(int n, struct position* t)
         printf("(%d %d) ", t[i].x, t[i].y);
     }
     printf("\n");
-}
-
-/*a revoir*/
-int test_init_rule()
-{
-    unsigned int n = rules_count();
-    printf("Le nombre de regles a verifier est : %d\n", n);
-    printf("Verification du tableau de couleurs d'une regle ...\n");
-    for (unsigned int i = 0; i < n; ++i) {
-        unsigned int nb_changes = rule_num_changes(rule_get(i));
-        if (nb_changes != 4) {
-            printf("Erreur: mauvaise valeur pour nb_changes\n \n");
-            return 1;
-        }
-        /*
-        for(unsigned int j=0; j<nb_changes; ++j)
-        {
-            unsigned int c = rule_change_to(rule_get(i), j); finir de tester
-        }*/
-    }
-    return 0;
 }
 
 void create_damier(struct world* w)
@@ -109,6 +88,7 @@ void create_basic_world(struct world* w)
      */
 }
 
+/** Créer le monde attendu à partir du monde de départ, du monde à modifier, des deplacements, et de la position de la cellule à déplacer*/
 void world_expected_after_movement(struct world* initial_world, struct world* final_world, int dx, int dy, unsigned int i, unsigned int j)
 {
     if (dx == 0 && dy == 0) {
@@ -123,9 +103,9 @@ void world_expected_after_movement(struct world* initial_world, struct world* fi
     }
 }
 
+/** La règel suivante change le SAND (blanc) en EMPTY(noir, idx=0) ou en GRASS(vert,idx=1) 
+ *  Utile  pour le test d'utilisation de RANDOM_COLOR comme couleur bonus ie une couleur qui 'match' avec toutes les couleurs*/
 void create_rule1(struct rule* r)
-/** Change le SAND (blanc) en EMPTY(noir, idx=0) ou en GRASS(vert,idx=1) */
-/** test d'utilisation de RANDOM_COLOR comme couleur bonus ie uen couleur qui match avec toutes les couleurs*/
 {
     r->len_changes = 2;
     r->next_state[0].next_color = EMPTY;
@@ -140,8 +120,9 @@ void create_rule1(struct rule* r)
     r->pattern[4] = SAND;
 }
 
+/** Créer une règle comportant 8 déplacements et 1 changement de couleur.
+ * Le but est étant de tester les déplacements positifs, négatifs et la gestion des bords d'un monde 3x3 */
 void create_rule_movements(struct rule* r)
-/** Chute libre d'une particule de sable */
 {
     r->len_changes = 9;
     for (int i = 0; i < NB_NEIGHBORS; i++) {
@@ -160,7 +141,7 @@ void create_rule_movements(struct rule* r)
     }
     r->next_state[7].next_color = SAND;
     r->next_state[8].next_color = SAND;
-    r->next_state[0].next_color = GRASS; // quand pas deplacement, SAND devient GRASS
+    r->next_state[0].next_color = GRASS; // Le changement de couleur fait passer une cellule de SAND à GRASS
     r->next_state[7].dx = 2;
     r->next_state[7].dy = 0;
     r->next_state[8].dx = 0;
@@ -181,6 +162,9 @@ void print_moves_rule(struct rule* r, unsigned int len_changes, struct position*
     afficher_tableau_positions(len_changes, t);
 }
 
+/** Test si une règle correspond à un motif présent dans le monde, 
+ * Si c'est le cas, la position est stockée dans le tableau t. 
+ * La fonction retourne le nombre de correspondances entre la règle et le monde (qui est également la réelle taille de t)*/ 
 int test_rule_match(const struct world* w, const struct rule* r, struct position t[])
 {
     int nb_matchs = 0;
@@ -196,6 +180,8 @@ int test_rule_match(const struct world* w, const struct rule* r, struct position
     return nb_matchs;
 }
 
+/** Applique sur un monde les changement liée à un changement d'une règle.
+ * Prend en compte les changements de couleurs et les déplacements.*/
 void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
 {
     struct queue q;
@@ -225,6 +211,7 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
     }
 }
 
+/** Test des règles utilisant RANDOM_COLOR*/
 int test_rule_with_random_color()
 {
     printf("##################################################################################\n");
@@ -263,6 +250,7 @@ int test_rule_with_random_color()
     return EXIT_SUCCESS;
 }
 
+/** Test une règle avec des déplacements*/
 int test_deplacements()
 {
     printf("#################################################################################\n");

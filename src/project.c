@@ -25,6 +25,7 @@ unsigned int chose_change(unsigned int nb_change)
 
 int main(int argc, char* argv[])
 {
+    // Gestion des options -s et -m
     if (argc == 2 || argc == 4 || argc > 5) {
         fprintf(stderr, "Erreur : il n'a pas été entré le bon nombre de paramètres.\n");
         return EXIT_FAILURE;
@@ -46,12 +47,8 @@ int main(int argc, char* argv[])
         }
         input_opt = getopt(argc, argv, "s:");
     }
+
     struct world w;
-
-    /* pas necessaire ici  je pense
-    w = world_init(opt, seed); //pq des parametres dans world_init ??
-    world_disp(w);*/
-
     w = world_init(opt, seed);
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
@@ -89,13 +86,3 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-/*
-            for(unsigned int idx_color=0; idx_color<n; ++idx_color)
-            {
-                unsigned int color = rule_change_to(rule_get(change_tmp->idx_rule), idx_color);
-                if(rand()%100<10)
-                {
-                    world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, idx_color);
-                }
-            }
-*/
