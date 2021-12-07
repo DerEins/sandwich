@@ -6,7 +6,7 @@
 #define MAX_QUEUE_SIZE 10 * (WIDTH * HEIGHT) + 10
 /** Concrete struct representing a modifications inside a queue */
 struct change {
-    unsigned int i, j, idx_rule;
+    unsigned int i, j, idx_rule, idx_next_state;
     struct change* next;
 };
 
@@ -21,7 +21,7 @@ struct queue {
 };
 
 /** Create a new change */
-struct change* change_create(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule);
+struct change* change_create(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule, unsigned int idx_next_change);
 
 /** Create a new modifications queue*/
 void queue_init(struct queue* queue);
@@ -30,7 +30,7 @@ void queue_init(struct queue* queue);
 int queue_is_not_empty(struct queue* queue);
 
 /** Add a change to the end of an existing queue*/
-void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule);
+void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule, unsigned int idx_next_state);
 
 /** Remove a change to a queue and return the change*/
 struct change* queue_pop(struct queue* queue);

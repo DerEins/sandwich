@@ -12,17 +12,31 @@ struct world world_init();
 
 void world_disp(struct world* w);
 
-void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_change)
+int solve_conflict(struct conflict t_conflicts[], unsigned int i, unsigned int j)
+{
+    struct conflict c = t_conflicts[i * WIDTH + j];
+    if (c.conflict_to_process == 1) // si il n'y a qu'un 'conflit' (c'est plus un conflit du coup mais bon ...)
+    {
+        return 1;
+    } else if ((rand() % c.nb_conflicts) == 0) // 1 chance sur le nb de conflit d'accepter ce conflit
+    {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_change, struct conflict t_conflicts[])
 {
     unsigned int dx = rule_change_dx(r, idx_change);
     unsigned int dy = rule_change_dy(r, idx_change);
-    if (dx || dy) {
-        w->t[i * WIDTH + j] = EMPTY;
-        w->t[modulo(i+dx,HEIGHT) * WIDTH + modulo(j+dy, WIDTH)] = rule_change_to(r, idx_change);
-    }
-    else 
-    {
-        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);   
+    if (solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH))) {
+        if (dx || dy) {
+            w->t[i * WIDTH + j] = EMPTY;
+            w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
+        } else {
+            w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
+        }
     }
 }
 
@@ -62,6 +76,7 @@ int main(int argc, char* argv[])
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
     for (int i = 0; i < nb_pictures; i++) {
+        struct conflict t_conflicts[WIDTH * WIDTH];
         struct queue q;
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
@@ -71,7 +86,13 @@ int main(int argc, char* argv[])
                 for (unsigned int j = 1; j < rules_count(); ++j) {
                     struct rule* r = rule_get(j);
                     if (rule_match(&w, r, k, l)) {
-                        queue_append(&q, k, l, j);
+                        unsigned int idx_change = chose_change(rule_num_changes(rule_get(j)));
+                        int dx_tmp = rule_change_dx(rule_get(j), idx_change);
+                        int dy_tmp = rule_change_dy(rule_get(j), idx_change);
+                        int index_tmp = modulo(k + dx_tmp, HEIGHT) * WIDTH + modulo(l + dy_tmp, WIDTH);
+                        t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
+                        t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
+                        queue_append(&q, k, l, j, idx_change);
                         break;
                     }
                 }
@@ -81,8 +102,7 @@ int main(int argc, char* argv[])
         while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
-            unsigned int idx_change = chose_change(rule_num_changes(rule_get(change_tmp->idx_rule)));
-            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, idx_change);
+            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, change_tmp->idx_next_state, t_conflicts);
         }
         world_disp(&w);
     }
