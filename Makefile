@@ -13,7 +13,7 @@ project: src/project.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/utils.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c  
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o -o src/project
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o -o project
 
 test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c 
