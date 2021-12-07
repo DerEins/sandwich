@@ -18,11 +18,9 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned in
     unsigned int dy = rule_change_dy(r, idx_change);
     if (dx || dy) {
         w->t[i * WIDTH + j] = EMPTY;
-        w->t[modulo(i+dx,HEIGHT) * WIDTH + modulo(j+dy, WIDTH)] = rule_change_to(r, idx_change);
-    }
-    else 
-    {
-        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);   
+        w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
+    } else {
+        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
     }
 }
 
@@ -66,12 +64,11 @@ int main(int argc, char* argv[])
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
-                // fprintf(stderr, "%d\n", w.t[k * WIDTH + l]);
-                // fprintf(stderr, "%d\n", w.t[(k + 1) * WIDTH + l]);
                 for (unsigned int j = 1; j < rules_count(); ++j) {
                     struct rule* r = rule_get(j);
                     if (rule_match(&w, r, k, l)) {
-                        queue_append(&q, k, l, j);
+                        unsigned int idx_change = chose_change(rule_num_changes(rule_get(j)));
+                        queue_append(&q, k, l, j, idx_change);
                         break;
                     }
                 }
@@ -81,11 +78,9 @@ int main(int argc, char* argv[])
         while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);
-            unsigned int idx_change = chose_change(rule_num_changes(rule_get(change_tmp->idx_rule)));
-            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, idx_change);
+            world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, change_tmp->idx_next_state);
         }
         world_disp(&w);
     }
     return 0;
 }
-

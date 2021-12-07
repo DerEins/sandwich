@@ -1,16 +1,25 @@
+#include <assert.h>
 #include <stdio.h>
 
 #include "queue.h"
 #include "rule.h"
 
 /** Create a new change in an existing queue */
-struct change* change_create(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule)
+struct change* change_create(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule, unsigned int idx_next_state)
 {
-    ++(queue->len_queue);
-    struct change* change = &(queue->list_changes[queue->len_queue]);
+    struct change* change = NULL;
+    if (queue->first_done != NULL) {
+        change = queue->first_done;
+        queue->first_done = (queue->first_done)->next;
+    } else {
+        assert(queue->len_list_changes - 1 < MAX_QUEUE_SIZE);
+        ++(queue->len_list_changes);
+        change = &(queue->list_changes)[queue->len_list_changes];
+    }
     change->i = i;
     change->j = j;
     change->idx_rule = idx_rule;
+    change->idx_next_state = idx_next_state;
     change->next = NULL;
     return change;
 }
@@ -18,7 +27,7 @@ struct change* change_create(struct queue* queue, unsigned int i, unsigned int j
 /** Initialize attributes of an existing queue*/
 void queue_init(struct queue* queue)
 {
-    queue->len_queue = 0;
+    queue->len_list_changes = 0;
     queue->first_to_do = NULL;
     queue->first_done = NULL;
     queue->last_to_do = NULL;
@@ -33,9 +42,9 @@ int queue_is_not_empty(struct queue* queue)
 
 /** Add a change to the end of an existing queue*/
 
-void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule)
+void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule, unsigned int idx_next_state)
 {
-    struct change* change = change_create(queue, i, j, idx_rule);
+    struct change* change = change_create(queue, i, j, idx_rule, idx_next_state);
 
     if (queue->first_to_do == NULL) {
         queue->first_to_do = change;
