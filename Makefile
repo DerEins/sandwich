@@ -13,7 +13,7 @@ project: src/project.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/utils.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c  
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o -o src/project
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o -o project
 
 test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c 
@@ -36,4 +36,4 @@ test_world :
 	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o utils.o test_world.o
 
 clean:
-	rm -f src/project test_* *.o vgcore* animation
+	rm -f project test_* *.o vgcore* animation
