@@ -11,6 +11,35 @@ struct world world_init(char opt, int seed) {
   srand(seed);
   struct world w;
   for (int i = 0; i < WIDTH * HEIGHT; i++) {
+      w.t[i] = EMPTY;
+  }
+  int x_mid = HEIGHT / 2;
+  int y_mid = WIDTH / 2;
+  int i = 1;
+  int j = 1;
+  w.t[x_mid * WIDTH + (y_mid - j)] = GRASS;
+  w.t[x_mid * WIDTH + (y_mid + j)] = GRASS;
+  while ((x_mid - i) > 1 && (y_mid - j) > 1) {
+      w.t[(x_mid + i) * WIDTH + (y_mid - j)] = GRASS;
+      w.t[(x_mid + i) * WIDTH + (y_mid + j)] = GRASS;
+      w.t[(x_mid - i) * WIDTH + (y_mid - j)] = GRASS;
+      w.t[(x_mid - i) * WIDTH + (y_mid + j)] = GRASS;
+      for (int k = (x_mid - i) * WIDTH + (y_mid - j) + 1; k < (x_mid - i) * WIDTH + (y_mid + j); k++) {
+          w.t[k] = SAND;
+      }
+      i++;
+      j++;
+  }
+  int k = (x_mid + i) * WIDTH + (y_mid - j) + WIDTH / 8; // améliorer le WIDTH/8
+  while (k < (x_mid + i) * WIDTH + (y_mid + j) - WIDTH / 8) {
+      w.t[k] = GRASS;
+      k++;
+  }
+  return w;
+}
+
+/** SAND FALL
+ *   for (int i = 0; i < WIDTH * HEIGHT; i++) {
     if (opt == 's') {
       switch (rand() % STATE_COUNT + 3) {
       case 1:
@@ -36,9 +65,7 @@ struct world world_init(char opt, int seed) {
         w.t[i] = EMPTY;
       }
     }
-  }
-  return w;
-}
+  } */
 
 /** Display a world according to the rules specified*/
 void world_disp(struct world *w) {
