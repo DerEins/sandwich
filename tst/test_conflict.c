@@ -8,7 +8,7 @@
 
 #define MAX_STATE 10
 #define NB_NEIGHBORS 9
-#define NB_IMAGES 10
+#define NB_IMAGES 100
 
 struct world world_init();
 void world_disp(struct world* w);
@@ -77,13 +77,18 @@ void construct_t_conflicts(struct conflict* t)
 int solve_conflict(struct conflict t_conflicts[], unsigned int i, unsigned int j)
 {
     struct conflict c = t_conflicts[i * WIDTH + j];
-    if (c.conflict_to_process == 1) // si il n'y a qu'un 'conflit' (c'est plus un conflit du coup mais bon ...)
+    int random = rand();
+    if (c.nb_conflicts == 0) { // le conflit a été géré
+        return 0;
+    } else if (c.conflict_to_process == 1) // si il n'y a qu'un 'conflit' (c'est plus un conflit du coup mais bon ...)
     {
         return 1;
-    } else if ((rand() % c.nb_conflicts) == 0) // 1 chance sur le nb de conflit d'accepter ce conflit
+    } else if ((random % c.nb_conflicts) == 0) // 1 chance sur le nb de conflit d'accepter ce conflit
     {
+        t_conflicts[i * WIDTH + j].nb_conflicts = 0;
         return 1;
     } else {
+        t_conflicts[i * WIDTH + j].conflict_to_process -= 1;
         return 0;
     }
 }
@@ -92,13 +97,14 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned in
 {
     unsigned int dx = rule_change_dx(r, idx_change);
     unsigned int dy = rule_change_dy(r, idx_change);
-    if (solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH))) {
+    int s = solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH));
+    if (s) {
         if (dx || dy) {
-            w->t[i * WIDTH + j] = EMPTY;
             w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
-        } else {
-            w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
+            w->t[i * WIDTH + j] = EMPTY;
         }
+    } else {
+        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
     }
 }
 
@@ -113,8 +119,9 @@ int main()
     struct world w;
     w = world_init();
     world_test_conflict(&w);
-    world_disp(&w);
     printf("%d %d\n", WIDTH, HEIGHT);
+    world_disp(&w);
+    srand(55); // essayer avec 128 pour voir les jaunes passer avant.
     for (int i = 0; i < NB_IMAGES; i++) {
         struct conflict t_conflicts[WIDTH * HEIGHT];
         construct_t_conflicts(t_conflicts);
@@ -129,15 +136,20 @@ int main()
                         int dx_tmp = rule_change_dx(&t[j], idx_change);
                         int dy_tmp = rule_change_dy(&t[j], idx_change);
                         int index_tmp = modulo(k + dx_tmp, HEIGHT) * WIDTH + modulo(l + dy_tmp, WIDTH);
-                        t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
-                        t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
-                        queue_append(&q, k, l, j, idx_change);
+                        if (w.t[index_tmp] == EMPTY && (dx_tmp || dy_tmp)) {
+                            t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
+                            t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
+                            queue_append(&q, k, l, j, idx_change);
+                        } else if (!(dx_tmp || dy_tmp)) {
+                            t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
+                            t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
+                            queue_append(&q, k, l, j, idx_change);
+                        }
                         break;
                     }
                 }
             }
         }
-        srand(128);
         while (queue_is_not_empty(&q)) {
             struct change* change_tmp;
             change_tmp = queue_pop(&q);

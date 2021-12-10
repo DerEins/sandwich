@@ -27,9 +27,8 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests) {
   printf("###############################################################\n");
   printf("Initialisation d'un monde ...");
   struct world w1;
-  w1 = world_init(
-      opt, seed1); // peut-on mettre une exceptions si l'appel de la fonction
-                   // retourne une erreur et ne veut pas compiler ?
+  w1 = world_init(opt, seed1); // peut-on mettre une exceptions si l'appel de la fonction
+                               // retourne une erreur et ne veut pas compiler ?
   printf("VALIDE !\n");
   printf("Test de l'etat des cellules (blanches ou noires) et de la taille du "
          "tableau de world....");
