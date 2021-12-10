@@ -12,8 +12,9 @@ project: src/project.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/utils.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c  
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o -o project
+	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c
+	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/conflict.c  
+	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o conflict.o -o project
 
 test_queue : tst/test_queue.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c 
@@ -41,7 +42,8 @@ test_conflict :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/world.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/utils.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/queue.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o test_conflict.o
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o conflict.o test_conflict.o
 
 clean:
 	rm -f project test_* *.o vgcore* animation

@@ -1,3 +1,4 @@
+#include "../src/conflict.h"
 #include "../src/queue.h"
 #include "../src/rule.h"
 #include "../src/utils.h"
@@ -51,7 +52,6 @@ void create_rule_sand(struct rule* r)
     r->pattern[4] = SAND;
 }
 
-/** the grass go down */
 void create_rule_grass(struct rule* r)
 {
     r->len_changes = 1;
@@ -62,35 +62,6 @@ void create_rule_grass(struct rule* r)
         r->pattern[i] = RANDOM_COLOR;
     }
     r->pattern[4] = GRASS;
-}
-
-void construct_t_conflicts(struct conflict* t)
-{
-    for (int i = 0; i < WIDTH * HEIGHT; ++i) {
-        t[i].conflict_to_process = 0;
-        t[i].nb_conflicts = 0;
-    }
-}
-
-// the main function (a copy of project.c)
-
-int solve_conflict(struct conflict t_conflicts[], unsigned int i, unsigned int j)
-{
-    struct conflict c = t_conflicts[i * WIDTH + j];
-    int random = rand();
-    if (c.nb_conflicts == 0) { // le conflit a été géré
-        return 0;
-    } else if (c.conflict_to_process == 1) // si il n'y a qu'un 'conflit' (c'est plus un conflit du coup mais bon ...)
-    {
-        return 1;
-    } else if ((random % c.nb_conflicts) == 0) // 1 chance sur le nb de conflit d'accepter ce conflit
-    {
-        t_conflicts[i * WIDTH + j].nb_conflicts = 0;
-        return 1;
-    } else {
-        t_conflicts[i * WIDTH + j].conflict_to_process -= 1;
-        return 0;
-    }
 }
 
 void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_change, struct conflict t_conflicts[])
