@@ -76,7 +76,7 @@ int main(int argc, char* argv[])
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
     for (int i = 0; i < nb_pictures; i++) {
-        struct conflict t_conflicts[WIDTH * WIDTH];
+        struct conflict t_conflicts[WIDTH * HEIGHT];
         struct queue q;
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {

@@ -21,6 +21,7 @@ struct next_state {
     unsigned int next_color;
     int dx, dy;
 };
+
 struct rule {
     unsigned int pattern[NB_NEIGHBORS]; 
     unsigned int len_changes;
@@ -194,9 +195,9 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
             int dx = r->next_state[idx_change].dx;
             int dy = r->next_state[idx_change].dy;
             if (dx || dy) {
-                queue_append(&q, p.x, p.y, 1); // la rule avec l'index 1 est celle qui remplace une cellule par EMPTY en (i,j)
+                queue_append(&q, p.x, p.y, 1, idx_change); // la rule avec l'index 1 est celle qui remplace une cellule par EMPTY en (i,j)
             }
-            queue_append(&q, modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0);
+            queue_append(&q, modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0, idx_change);
         }
     }
     while (queue_is_not_empty(&q)) {

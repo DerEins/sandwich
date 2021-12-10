@@ -35,5 +35,13 @@ test_world :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
 	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o utils.o test_world.o
 
+test_conflict :
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_conflict.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/queue.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_conflict queue.o rule.o world.o utils.o test_conflict.o
+
 clean:
 	rm -f src/project test_* *.o vgcore* animation
