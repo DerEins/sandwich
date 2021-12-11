@@ -13,7 +13,7 @@
 
 /** Concrete struct representing a world for a cellular automaton */
 struct world {
-  unsigned int t[WIDTH * HEIGHT];
+    unsigned int t[WIDTH * HEIGHT];
 };
 
 #endif // __WORLD_H__

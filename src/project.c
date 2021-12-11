@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
         case 'm':
             nb_pictures = atoi(optarg);
             break;
-        default: /* '?' */
+        default:
             break;
         }
         input_opt = getopt(argc, argv, "s:");

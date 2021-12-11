@@ -5,7 +5,7 @@ SANDWICH_FLAGS = -DWIDTH=$(WIDTH) -DHEIGHT=$(HEIGHT)
 
 all: project
 
-test : test_queue test_rule test_world
+test : test_queue test_rule test_world test_conflict
 
 project: src/project.c
 	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/world.c

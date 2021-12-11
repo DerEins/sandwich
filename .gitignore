@@ -3,12 +3,13 @@
 *~
 *.vscode
 *.clang-format
-vgcore.*
+vgcore*
 *project 
 test_project 
 test_queue
 test_rule
 test_world
+test_conflict
 *.o
 sdl
 animation
