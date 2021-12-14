@@ -2,39 +2,13 @@
 #include "queue.h"
 #include "rule.h"
 #include "utils.h"
-#include "world.h"
+#include "world_ext.h"
 #include <assert.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 extern char* optarg;
-
-struct world world_init();
-
-void world_disp(struct world* w);
-
-void world_apply_rule(struct world* w, struct rule* r, int i, int j,
-    unsigned int idx_change, struct conflict t_conflicts[])
-{
-    unsigned int dx = rule_change_dx(r, idx_change);
-    unsigned int dy = rule_change_dy(r, idx_change);
-    int s = solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH));
-    if (s) {
-        if (dx || dy) {
-            w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
-            w->t[i * WIDTH + j] = EMPTY;
-        }
-    } else {
-        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
-    }
-}
-
-unsigned int chose_change(unsigned int nb_change)
-{
-    unsigned int r = rand();
-    return r % nb_change;
-}
 
 int main(int argc, char* argv[])
 {

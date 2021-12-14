@@ -2,7 +2,6 @@
 #include <stdio.h>
 
 #include "queue.h"
-#include "rule.h"
 
 /** Create a new change in an existing queue */
 struct change* change_create(struct queue* queue, unsigned int i,

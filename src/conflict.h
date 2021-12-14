@@ -1,8 +1,6 @@
 #ifndef __CONFLICT_H__
 #define __CONFLICT_H__
 
-#include "world.h"
-
 struct conflict {
     unsigned int nb_conflicts;
     unsigned int conflict_to_process;

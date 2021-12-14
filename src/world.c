@@ -1,6 +1,7 @@
-#include "world.h"
+#include "conflict.h"
 #include "rule.h"
 #include "utils.h"
+#include "world_ext.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -96,5 +97,21 @@ void world_disp(struct world* w)
             printf("%d \n", w->t[i]);
         } else
             printf("%d ", w->t[i]);
+    }
+}
+
+void world_apply_rule(struct world* w, struct rule* r, int i, int j,
+    unsigned int idx_change, struct conflict t_conflicts[])
+{
+    unsigned int dx = rule_change_dx(r, idx_change);
+    unsigned int dy = rule_change_dy(r, idx_change);
+    int s = solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH));
+    if (s) {
+        if (dx || dy) {
+            w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
+            w->t[i * WIDTH + j] = EMPTY;
+        }
+    } else {
+        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
     }
 }

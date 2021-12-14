@@ -12,4 +12,6 @@ test_world
 test_conflict
 *.o
 sdl
+cinclude2dot
+dot2drawio.py
 animation

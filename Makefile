@@ -27,14 +27,18 @@ test_rule :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/queue.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule queue.o rule.o world.o utils.o test_rule.o
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule queue.o rule.o world.o utils.o test_rule.o utils_test.o conflict.o
 
 test_world :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_world.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o utils.o test_world.o
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o utils.o test_world.o conflict.o utils_test.o
 
 test_conflict :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/rule.c 
@@ -43,7 +47,8 @@ test_conflict :
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/utils.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/queue.c
 	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o conflict.o test_conflict.o
+	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
+	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o conflict.o test_conflict.o utils_test.o
 
 clean:
 	rm -f project test_* *.o vgcore* animation

@@ -14,4 +14,6 @@ enum state {
  * return a positive number like for congruence */
 int modulo(int x, int n);
 
+unsigned int chose_change(unsigned int nb_change);
+
 #endif // __UTILS_H__

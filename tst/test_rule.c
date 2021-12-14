@@ -1,69 +1,11 @@
 #include "../src/queue.h"
-#include "../src/rule.h"
+#include "../src/rule_ext.h"
 #include "../src/utils.h"
-#include "../src/world.h"
+#include "../src/world_ext.h"
+#include "utils_test.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define MAX_STATE 10
-#define NB_NEIGHBORS 9
-
-struct world world_init();
-void world_disp(struct world* w);
-
-struct position {
-    unsigned int x;
-    unsigned int y;
-};
-
-struct next_state {
-    unsigned int next_color;
-    int dx, dy;
-};
-
-struct rule {
-    unsigned int pattern[NB_NEIGHBORS];
-    unsigned int len_changes;
-    struct next_state next_state[MAX_STATE];
-};
-
-//### COPIE D'UNE PARTIE DES .C INACCESSIBLES ###
-
-void world_apply_rule(struct world* w, struct rule* r, int i, int j,
-    unsigned int idx_color)
-{
-    w->t[i * WIDTH + j] = rule_change_to(r, idx_color);
-}
-
-//### FIN DE LA COPIE ###
-
-void afficher_tableau(int n, unsigned int* t)
-{
-    for (int i = 0; i < n; i++) {
-        printf("%d ", t[i]);
-    }
-    printf("\n");
-}
-
-int comparer_monde(struct world* w1, struct world* w2)
-{
-    for (int i = 0; i < WIDTH * HEIGHT; ++i) {
-        if (w1->t[i] != w2->t[i]) {
-            printf("Les mondes ne sont pas identiques !\n");
-            return 0;
-        }
-    }
-    return 1;
-}
-
-void afficher_tableau_positions(int n, struct position* t)
-{
-    for (int i = 0; i < n; i++) {
-        printf("(%d %d) ", t[i].x, t[i].y);
-    }
-    printf("\n");
-}
 
 void create_damier(struct world* w)
 {
@@ -157,20 +99,6 @@ void create_rule_movements(struct rule* r)
     //(0,0) (1,0) (0,1) (1,1) (-1,0) (0,-1) (-1,-1) (2,0) (0,2)
 }
 
-/**Prend en argument le pointeur vers une règle, len_changes de la rule, un
- * tableau de taille len_changes et retourne tous les déplacements d'une règle*/
-void print_moves_rule(struct rule* r, unsigned int len_changes,
-    struct position* t)
-{
-    for (unsigned int i = 0; i < len_changes; ++i) {
-        struct position p;
-        p.x = r->next_state[i].dx;
-        p.y = r->next_state[i].dy;
-        t[i] = p;
-    }
-    afficher_tableau_positions(len_changes, t);
-}
-
 /** Test si une règle correspond à un motif présent dans le monde,
  * Si c'est le cas, la position est stockée dans le tableau t.
  * La fonction retourne le nombre de correspondances entre la règle et le monde
@@ -218,7 +146,7 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
         {
             w->t[change_tmp->i * WIDTH + change_tmp->j] = EMPTY;
         } else {
-            world_apply_rule(w, r, change_tmp->i, change_tmp->j, idx_change);
+            w->t[change_tmp->i * WIDTH + change_tmp->j] = rule_change_to(r, idx_change);
         }
     }
 }

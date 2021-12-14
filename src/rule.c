@@ -1,26 +1,10 @@
 #include <assert.h>
 #include <stdio.h>
 
-#include "rule.h"
+#include "rule_ext.h"
+
 #include "utils.h"
 #include "world.h"
-
-enum state;
-
-#define NB_NEIGHBORS 9
-#define MAX_RULE 5
-#define MAX_STATE 50
-
-struct next_state {
-    unsigned int next_color;
-    int dx, dy;
-};
-struct rule {
-    unsigned int
-        pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
-    unsigned int len_changes;
-    struct next_state next_state[MAX_STATE];
-};
 
 struct rule rules[MAX_RULE];
 

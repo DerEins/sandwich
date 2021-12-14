@@ -1,34 +1,13 @@
 #include "../src/conflict.h"
 #include "../src/queue.h"
-#include "../src/rule.h"
+#include "../src/rule_ext.h"
 #include "../src/utils.h"
-#include "../src/world.h"
+#include "../src/world_ext.h"
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_STATE 10
-#define NB_NEIGHBORS 9
 #define NB_IMAGES 100
-
-struct world world_init();
-void world_disp(struct world* w);
-
-struct position {
-    unsigned int x;
-    unsigned int y;
-};
-
-struct next_state {
-    unsigned int next_color;
-    int dx, dy;
-};
-
-struct rule {
-    unsigned int pattern[NB_NEIGHBORS];
-    unsigned int len_changes;
-    struct next_state next_state[MAX_STATE];
-};
 
 void world_test_conflict(struct world* w)
 {
@@ -64,21 +43,6 @@ void create_rule_grass(struct rule* r)
     r->pattern[4] = GRASS;
 }
 
-void world_apply_rule(struct world* w, struct rule* r, int i, int j, unsigned int idx_change, struct conflict t_conflicts[])
-{
-    unsigned int dx = rule_change_dx(r, idx_change);
-    unsigned int dy = rule_change_dy(r, idx_change);
-    int s = solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH));
-    if (s) {
-        if (dx || dy) {
-            w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
-            w->t[i * WIDTH + j] = EMPTY;
-        }
-    } else {
-        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
-    }
-}
-
 int main()
 {
     struct rule t[2];
@@ -88,7 +52,6 @@ int main()
     create_rule_grass(&r);
     t[1] = r;
     struct world w;
-    w = world_init();
     world_test_conflict(&w);
     printf("%d %d\n", WIDTH, HEIGHT);
     world_disp(&w);
