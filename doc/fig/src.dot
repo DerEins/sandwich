@@ -1,0 +1,30 @@
+digraph "source tree" {
+    overlap=scale;
+    size="8,10";
+    ratio="fill";
+    fontsize="16";
+    fontname="Helvetica";
+	clusterrank="local";
+	"project.c" -> "conflict.h"
+	"queue.h" -> "world.h"
+	"rule.h" -> "world.h"
+	"project.c" -> "rule.h"
+	"conflict.c" -> "conflict.h"
+	"world_ext.h" -> "conflict.h"
+	"rule_ext.h" -> "rule.h"
+	"utils.c" -> "utils.h"
+	"project.c" -> "utils.h"
+	"world.c" -> "conflict.h"
+	"rule.c" -> "world.h"
+	"world_ext.h" -> "world.h"
+	"project.c" -> "world_ext.h"
+	"world_ext.h" -> "rule.h"
+	"world.c" -> "utils.h"
+	"rule.c" -> "utils.h"
+	"queue.c" -> "queue.h"
+	"conflict.c" -> "world.h"
+	"rule.c" -> "rule_ext.h"
+	"world.c" -> "world_ext.h"
+	"project.c" -> "queue.h"
+	"world.c" -> "rule.h"
+}
