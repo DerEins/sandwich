@@ -8,68 +8,53 @@
 
 struct rule rules[MAX_RULE];
 
+int born(const struct world* w, unsigned int i, unsigned int j)
+{
+    if (w->t[(i * WIDTH + j)] != DEAD) {
+        return 0;
+    } else {
+        unsigned int nb_alive = 0;
+        for (int k = -1; k <= 1; k++) {
+            for (int l = -1; l <= 1; l++) {
+                if (w->t[modulo(i + k, HEIGHT) * WIDTH + modulo(j + l, WIDTH)] == ALIVE && !(k == 0 && l == 0)) {
+                    ++nb_alive;
+                }
+            }
+        }
+        return nb_alive == 3;
+    }
+}
+
+int dead(const struct world* w, unsigned int i, unsigned int j)
+{
+    if (w->t[(i * WIDTH + j)] != ALIVE) {
+        return 0;
+    } else {
+        unsigned int nb_alive = 0;
+        for (int k = -1; k <= 1; k++) {
+            for (int l = -1; l <= 1; l++) {
+                if (w->t[modulo(i + k, HEIGHT) * WIDTH + modulo(j + l, WIDTH)] == ALIVE && !(k == 0 && l == 0)) {
+                    ++nb_alive;
+                }
+            }
+        }
+        return nb_alive <= 1 || nb_alive >= 4;
+    }
+}
+
 void rules_init() // règles pour générer un tas de sable
 {
-    for (int idx_rule = 0; idx_rule < MAX_RULE; ++idx_rule) {
-        for (int i = 0; i < 6; ++i) {
-            if (i != 4) {
-                rules[idx_rule].pattern[i] = RANDOM_COLOR;
-            }
-        }
+    rules[0].match = born;
+    rules[0].len_changes = 1;
+    rules[0].next_state[0].next_color = ALIVE;
+    rules[0].next_state[0].dx = 0;
+    rules[0].next_state[0].dy = 0;
 
-        if (idx_rule == 0) {
-            rules[idx_rule].len_changes = 1;
-            for (int i = 4; i < 9; ++i) {
-                rules[idx_rule].pattern[i] = RANDOM_COLOR;
-            }
-            rules[idx_rule].next_state[0].next_color = EMPTY;
-            rules[idx_rule].next_state[0].dx = 0;
-            rules[idx_rule].next_state[0].dy = 0;
-        } else {
-            rules[idx_rule].pattern[4] = SAND;
-            switch (idx_rule) {
-            case 1:
-                rules[idx_rule].len_changes = 1;
-                rules[idx_rule].pattern[6] = RANDOM_COLOR;
-                rules[idx_rule].pattern[7] = EMPTY;
-                rules[idx_rule].pattern[8] = RANDOM_COLOR;
-                rules[idx_rule].next_state[0].next_color = SAND;
-                rules[idx_rule].next_state[0].dx = 1;
-                rules[idx_rule].next_state[0].dy = 0;
-                break;
-            case 2:
-                rules[idx_rule].len_changes = 1;
-                rules[idx_rule].pattern[6] = EMPTY;
-                rules[idx_rule].pattern[7] = SAND;
-                rules[idx_rule].pattern[8] = SAND;
-                rules[idx_rule].next_state[0].next_color = SAND;
-                rules[idx_rule].next_state[0].dx = 0;
-                rules[idx_rule].next_state[0].dy = -1;
-                break;
-            case 3:
-                rules[idx_rule].len_changes = 2;
-                rules[idx_rule].pattern[6] = EMPTY;
-                rules[idx_rule].pattern[7] = SAND;
-                rules[idx_rule].pattern[8] = EMPTY;
-                rules[idx_rule].next_state[0].next_color = SAND;
-                rules[idx_rule].next_state[1].next_color = SAND;
-                rules[idx_rule].next_state[0].dx = 0;
-                rules[idx_rule].next_state[0].dy = 1;
-                rules[idx_rule].next_state[1].dx = 0;
-                rules[idx_rule].next_state[1].dy = -1;
-                break;
-            case 4:
-                rules[idx_rule].len_changes = 1;
-                rules[idx_rule].pattern[6] = SAND;
-                rules[idx_rule].pattern[7] = SAND;
-                rules[idx_rule].pattern[8] = EMPTY;
-                rules[idx_rule].next_state[0].next_color = SAND;
-                rules[idx_rule].next_state[0].dx = 0;
-                rules[idx_rule].next_state[0].dy = 1;
-                break;
-            }
-        }
-    }
+    rules[1].match = dead;
+    rules[1].len_changes = 1;
+    rules[1].next_state[0].next_color = DEAD;
+    rules[1].next_state[0].dx = 0;
+    rules[1].next_state[0].dy = 0;
 }
 
 unsigned int rules_count()
@@ -111,12 +96,9 @@ int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
     return 1;
 }
 
-int rule_match(const struct world* w, const struct rule* r, unsigned int i,
-    unsigned int j)
+int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
-    unsigned int tab[NB_NEIGHBORS];
-    find_neighbors(tab, w, i, j);
-    return (compare_patterns(NB_NEIGHBORS, r->pattern, tab));
+    return r->match(w, i, j);
 }
 
 unsigned int rule_num_changes(const struct rule* r) { return r->len_changes; }

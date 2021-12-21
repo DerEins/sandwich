@@ -4,7 +4,7 @@
 #include "rule.h"
 
 #define NB_NEIGHBORS 9
-#define MAX_RULE 5
+#define MAX_RULE 2
 #define MAX_STATE 50
 
 struct next_state {
@@ -13,8 +13,7 @@ struct next_state {
 };
 
 struct rule {
-    unsigned int
-        pattern[NB_NEIGHBORS]; // another def is possible instead of patterns
+    int (*match)(const struct world*, unsigned int, unsigned int);
     unsigned int len_changes;
     struct next_state next_state[MAX_STATE];
 };

@@ -13,23 +13,20 @@ struct world world_init(char opt, int seed)
     srand(seed);
     struct world w;
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
-        w.t[i] = EMPTY;
+        w.t[i] = ALIVE;
     }
     if (opt == 's') {
         for (int i = 0; i < WIDTH * HEIGHT; i++) {
-            int r = rand() % (STATE_COUNT);
+            int r = rand() % (10);
             switch (r) {
+            case 0:
+                w.t[i] = ALIVE;
+                break;
             case 1:
-                w.t[i] = EMPTY;
-                break;
-            case 2:
-                w.t[i] = SAND;
-                break;
-            case 3:
-                w.t[i] = GRASS;
+                w.t[i] = DEAD;
                 break;
             default:
-                w.t[i] = EMPTY;
+                w.t[i] = DEAD;
             }
         }
     } else {
@@ -37,22 +34,22 @@ struct world world_init(char opt, int seed)
         int y_mid = WIDTH / 2;
         int i = 1;
         int j = 1;
-        w.t[x_mid * WIDTH + (y_mid - j)] = GRASS;
-        w.t[x_mid * WIDTH + (y_mid + j)] = GRASS;
+        w.t[x_mid * WIDTH + (y_mid - j)] = ALIVE;
+        w.t[x_mid * WIDTH + (y_mid + j)] = ALIVE;
         while ((x_mid - i) > 1 && (y_mid - j) > 1) {
-            w.t[(x_mid + i) * WIDTH + (y_mid - j)] = GRASS;
-            w.t[(x_mid + i) * WIDTH + (y_mid + j)] = GRASS;
-            w.t[(x_mid - i) * WIDTH + (y_mid - j)] = GRASS;
-            w.t[(x_mid - i) * WIDTH + (y_mid + j)] = GRASS;
+            w.t[(x_mid + i) * WIDTH + (y_mid - j)] = ALIVE;
+            w.t[(x_mid + i) * WIDTH + (y_mid + j)] = ALIVE;
+            w.t[(x_mid - i) * WIDTH + (y_mid - j)] = ALIVE;
+            w.t[(x_mid - i) * WIDTH + (y_mid + j)] = ALIVE;
             for (int k = (x_mid - i) * WIDTH + (y_mid - j) + 1; k < (x_mid - i) * WIDTH + (y_mid + j); k++) {
-                w.t[k] = SAND;
+                w.t[k] = ALIVE;
             }
             i++;
             j++;
         }
         int k = (x_mid + i) * WIDTH + (y_mid - j) + WIDTH / 8; // améliorer le WIDTH/8
         while (k < (x_mid + i) * WIDTH + (y_mid + j) - WIDTH / 8) {
-            w.t[k] = GRASS;
+            w.t[k] = DEAD;
             k++;
         }
     }
@@ -64,7 +61,7 @@ struct world world_init(char opt, int seed)
     if (opt == 's') {
       switch (rand() % STATE_COUNT + 3) {
       case 1:
-        w.t[i] = EMPTY;
+        w.t[i] = ALIVE;
         break;
       case 2:
         w.t[i] = SAND;
@@ -73,7 +70,7 @@ struct world world_init(char opt, int seed)
         w.t[i] = GRASS;
         break;
       default:
-        w.t[i] = EMPTY;
+        w.t[i] = ALIVE;
       }
     } else {
       if (i < WIDTH * 3 && rand() % 5 == 0) {
@@ -83,7 +80,7 @@ struct world world_init(char opt, int seed)
                   i <= (WIDTH * (HEIGHT - 1) + WIDTH / 3))) {
         w.t[i] = GRASS;
       } else {
-        w.t[i] = EMPTY;
+        w.t[i] = ALIVE;
       }
     }
   } */
@@ -109,9 +106,9 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j,
     if (s) {
         if (dx || dy) {
             w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
-            w->t[i * WIDTH + j] = EMPTY;
+            w->t[i * WIDTH + j] = DEAD;
+        } else {
+            w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
         }
-    } else {
-        w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
     }
 }

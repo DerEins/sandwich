@@ -44,8 +44,7 @@ int queue_is_not_empty(struct queue* queue)
 
 /** Add a change to the end of an existing queue*/
 
-void queue_append(struct queue* queue, unsigned int i, unsigned int j,
-    unsigned int idx_rule, unsigned int idx_next_state)
+void queue_append(struct queue* queue, unsigned int i, unsigned int j, unsigned int idx_rule, unsigned int idx_next_state)
 {
     struct change* change = change_create(queue, i, j, idx_rule, idx_next_state);
 

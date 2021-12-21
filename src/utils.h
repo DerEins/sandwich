@@ -2,12 +2,15 @@
 #define __UTILS_H__
 
 enum state {
+    DEAD = 0,
+    ALIVE = 16777215,
     EMPTY = 13603939,
     SAND = 5293812,
     GRASS = 1809732,
     RANDOM_COLOR = 4294967295,
-    STATE_COUNT = 4,
-    FIRST_STATE = EMPTY
+
+    STATE_COUNT = 6,
+    FIRST_STATE = DEAD
 };
 
 /** The usal modulo for positive number, for the negative number the function

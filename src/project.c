@@ -41,6 +41,7 @@ int main(int argc, char* argv[])
     srand(seed);
     rules_init();
     printf("%d %d\n", WIDTH, HEIGHT);
+    world_disp(&w);
     for (int i = 0; i < nb_pictures; i++) {
         struct conflict t_conflicts[WIDTH * WIDTH];
         construct_t_conflicts(t_conflicts);
@@ -48,14 +49,14 @@ int main(int argc, char* argv[])
         queue_init(&q);
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
-                for (unsigned int j = 1; j < rules_count(); ++j) {
+                for (unsigned int j = 0; j < rules_count(); ++j) {
                     struct rule* r = rule_get(j);
                     if (rule_match(&w, r, k, l)) {
                         unsigned int idx_change = chose_change(rule_num_changes(rule_get(j)));
                         int dx_tmp = rule_change_dx(rule_get(j), idx_change);
                         int dy_tmp = rule_change_dy(rule_get(j), idx_change);
                         int index_tmp = modulo(k + dx_tmp, HEIGHT) * WIDTH + modulo(l + dy_tmp, WIDTH);
-                        if (w.t[index_tmp] == EMPTY && (dx_tmp || dy_tmp)) {
+                        if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) {
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
                             queue_append(&q, k, l, j, idx_change);
