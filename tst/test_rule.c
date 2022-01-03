@@ -50,6 +50,17 @@ void world_expected_after_movement(struct world* initial_world,
     }
 }
 
+int match_sand(const struct world* w, unsigned int i, unsigned int j)
+{
+    if (w->t[(i*WIDTH)+j] == SAND)
+    {
+        return 1;
+    }
+    else 
+    {
+        return 0;
+    }
+}
 /** La règel suivante change le SAND (blanc) en EMPTY(noir, idx=0) ou en
  * GRASS(vert,idx=1) Utile  pour le test d'utilisation de RANDOM_COLOR comme
  * couleur bonus ie une couleur qui 'match' avec toutes les couleurs*/
@@ -62,10 +73,7 @@ void create_rule1(struct rule* r)
     r->next_state[0].dy = 0;
     r->next_state[1].dx = 0;
     r->next_state[1].dy = 0;
-    for (int i = 0; i < NB_NEIGHBORS; i++) {
-        r->pattern[i] = RANDOM_COLOR;
-    }
-    r->pattern[4] = SAND;
+    r->match = match_sand;
 }
 
 /** Créer une règle comportant 8 déplacements et 1 changement de couleur.
@@ -74,10 +82,7 @@ void create_rule1(struct rule* r)
 void create_rule_movements(struct rule* r)
 {
     r->len_changes = 9;
-    for (int i = 0; i < NB_NEIGHBORS; i++) {
-        r->pattern[i] = RANDOM_COLOR;
-    }
-    r->pattern[4] = SAND;
+    r->match = match_sand;
     for (int j = 0; j < 4; j++) {
         r->next_state[j].dx = j % 2;
         r->next_state[j].dy = j / 2;

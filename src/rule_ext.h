@@ -4,7 +4,7 @@
 #include "rule.h"
 
 #define NB_NEIGHBORS 9
-#define MAX_RULE 2
+#define MAX_RULE 5
 #define MAX_STATE 50
 
 struct next_state {

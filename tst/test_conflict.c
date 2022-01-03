@@ -18,6 +18,30 @@ void world_test_conflict(struct world* w)
     w->t[1] = GRASS;
 }
 
+int sand_go_right(const struct world* w, unsigned int i, unsigned int j)
+{
+    if (w->t[(i*WIDTH)+j] == SAND)
+    {
+        return 1;
+    }
+    else 
+    {
+        return 0;
+    }
+}
+
+int grass_go_down(const struct world* w, unsigned int i, unsigned int j)
+{
+    if (w->t[(i*WIDTH)+j] == SAND)
+    {
+        return 1;
+    }
+    else 
+    {
+        return 0;
+    }
+}
+
 /** the sand go to the right */
 void create_rule_sand(struct rule* r)
 {
@@ -25,10 +49,7 @@ void create_rule_sand(struct rule* r)
     r->next_state[0].next_color = SAND;
     r->next_state[0].dx = 0;
     r->next_state[0].dy = 1;
-    for (int i = 0; i < NB_NEIGHBORS; i++) {
-        r->pattern[i] = RANDOM_COLOR;
-    }
-    r->pattern[4] = SAND;
+    r->match = sand_go_right;
 }
 
 void create_rule_grass(struct rule* r)
@@ -37,10 +58,7 @@ void create_rule_grass(struct rule* r)
     r->next_state[0].next_color = GRASS;
     r->next_state[0].dx = 1;
     r->next_state[0].dy = 0;
-    for (int i = 0; i < NB_NEIGHBORS; i++) {
-        r->pattern[i] = RANDOM_COLOR;
-    }
-    r->pattern[4] = GRASS;
+    r->match = grass_go_down;
 }
 
 int main()
