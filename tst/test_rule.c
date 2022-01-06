@@ -125,8 +125,7 @@ int test_rule_match(const struct world* w, const struct rule* r,
  * Prend en compte les changements de couleurs et les déplacements.*/
 void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
 {
-    struct queue q;
-    queue_init(&q);
+    queue_init();
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         struct position p;
         p.x = i / WIDTH;
@@ -135,15 +134,15 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
             int dx = r->next_state[idx_change].dx;
             int dy = r->next_state[idx_change].dy;
             if (dx || dy) {
-                queue_append(&q, p.x, p.y, 1, idx_change); // la rule avec l'index 1 est celle qui remplace une
-                                                           // cellule par EMPTY en (i,j)
+                queue_append(p.x, p.y, 1, idx_change); // la rule avec l'index 1 est celle qui remplace une
+                                                       // cellule par EMPTY en (i,j)
             }
-            queue_append(&q, modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0, idx_change);
+            queue_append(modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0, idx_change);
         }
     }
-    while (queue_is_not_empty(&q)) {
+    while (queue_is_not_empty()) {
         struct change* change_tmp;
-        change_tmp = queue_pop(&q);
+        change_tmp = queue_pop();
         if (change_tmp->idx_rule == 1) // Cas particulier du deplacement avec passage de i,j en EMPTY
         {
             w->t[change_tmp->i * WIDTH + change_tmp->j] = EMPTY;

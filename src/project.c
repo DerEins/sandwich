@@ -45,8 +45,7 @@ int main(int argc, char* argv[])
     for (int i = 0; i < nb_pictures; i++) {
         struct conflict t_conflicts[WIDTH * WIDTH];
         construct_t_conflicts(t_conflicts);
-        struct queue q;
-        queue_init(&q);
+        queue_init();
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
                 for (unsigned int j = 0; j < rules_count(); ++j) {
@@ -59,11 +58,11 @@ int main(int argc, char* argv[])
                         if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) { // deplacement dans une case vide
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
-                            queue_append(&q, k, l, j, idx_change);
+                            queue_append(k, l, j, idx_change);
                         } else if (!(dx_tmp || dy_tmp)) {
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
-                            queue_append(&q, k, l, j, idx_change);
+                            queue_append(k, l, j, idx_change);
                         } else {
                             fprintf(stderr, "Conflit perdant en %d %d car déplacement dans une case non vide.\n", k + dx_tmp, j = dy_tmp);
                         }
@@ -72,9 +71,9 @@ int main(int argc, char* argv[])
                 }
             }
         }
-        while (queue_is_not_empty(&q)) {
+        while (queue_is_not_empty()) {
             struct change* change_tmp;
-            change_tmp = queue_pop(&q);
+            change_tmp = queue_pop();
             world_apply_rule(&w, rule_get(change_tmp->idx_rule), change_tmp->i, change_tmp->j, change_tmp->idx_next_state, t_conflicts);
         }
         world_disp(&w);
