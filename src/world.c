@@ -110,5 +110,5 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j,
         } else {
             w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
         }
-    }
+    } 
 }

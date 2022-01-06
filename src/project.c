@@ -56,7 +56,7 @@ int main(int argc, char* argv[])
                         int dx_tmp = rule_change_dx(rule_get(j), idx_change);
                         int dy_tmp = rule_change_dy(rule_get(j), idx_change);
                         int index_tmp = modulo(k + dx_tmp, HEIGHT) * WIDTH + modulo(l + dy_tmp, WIDTH);
-                        if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) {
+                        if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) { // deplacement dans une case vide
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
                             queue_append(&q, k, l, j, idx_change);

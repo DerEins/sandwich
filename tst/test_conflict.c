@@ -12,7 +12,7 @@
 void world_test_conflict(struct world* w)
 {
     for (int i = 0; i < WIDTH * HEIGHT; ++i) {
-        w->t[i] = EMPTY;
+        w->t[i] = DEAD;
     }
     w->t[3] = SAND;
     w->t[1] = GRASS;
@@ -32,7 +32,7 @@ int sand_go_right(const struct world* w, unsigned int i, unsigned int j)
 
 int grass_go_down(const struct world* w, unsigned int i, unsigned int j)
 {
-    if (w->t[(i*WIDTH)+j] == SAND)
+    if (w->t[(i*WIDTH)+j] == GRASS)
     {
         return 1;
     }
@@ -73,7 +73,7 @@ int main()
     world_test_conflict(&w);
     printf("%d %d\n", WIDTH, HEIGHT);
     world_disp(&w);
-    srand(55); // essayer avec 128 pour voir les jaunes passer avant.
+    srand(128); // essayer avec 128 pour voir les jaunes passer avant.
     for (int i = 0; i < NB_IMAGES; i++) {
         struct conflict t_conflicts[WIDTH * HEIGHT];
         construct_t_conflicts(t_conflicts);
@@ -88,7 +88,7 @@ int main()
                         int dx_tmp = rule_change_dx(&t[j], idx_change);
                         int dy_tmp = rule_change_dy(&t[j], idx_change);
                         int index_tmp = modulo(k + dx_tmp, HEIGHT) * WIDTH + modulo(l + dy_tmp, WIDTH);
-                        if (w.t[index_tmp] == EMPTY && (dx_tmp || dy_tmp)) {
+                        if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) {
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
                             queue_append(&q, k, l, j, idx_change);
