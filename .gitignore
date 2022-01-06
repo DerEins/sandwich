@@ -12,6 +12,7 @@ test_world
 test_conflict
 *.o
 sdl
+sdl.linux.x86-64
 cinclude2dot
 dot2drawio.py
 animation

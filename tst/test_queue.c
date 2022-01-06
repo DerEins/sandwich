@@ -263,14 +263,13 @@ int test_pop()
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2) {
-        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
-        exit(EXIT_FAILURE);
+    int parm = 0;
+    if (argc >= 2) {
+        parm = atoi(argv[1]);
     }
 
     int error = EXIT_FAILURE;
-
-    switch (atoi(argv[1])) {
+    switch (parm) {
     case 1:
         error = test_append();
         break;

@@ -52,12 +52,9 @@ void world_expected_after_movement(struct world* initial_world,
 
 int match_sand(const struct world* w, unsigned int i, unsigned int j)
 {
-    if (w->t[(i*WIDTH)+j] == SAND)
-    {
+    if (w->t[(i * WIDTH) + j] == SAND) {
         return 1;
-    }
-    else 
-    {
+    } else {
         return 0;
     }
 }
@@ -254,14 +251,14 @@ int test_deplacements()
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
-        exit(EXIT_FAILURE);
+    int parm = 0;
+    if (argc >= 2) {
+        parm = atoi(argv[1]);
     }
 
     int error = EXIT_FAILURE;
 
-    switch (atoi(argv[1])) {
+    switch (parm) {
     case 1:
         error = test_rule_with_random_color();
         break;
@@ -269,9 +266,7 @@ int main(int argc, char** argv)
         error = test_deplacements();
         break;
     default:
-        error = test_rule_with_random_color();
+        error = test_rule_with_random_color() + test_deplacements();
     }
     return error;
-
-    return 0;
 }
