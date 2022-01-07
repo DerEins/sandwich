@@ -92,9 +92,10 @@ Par défaut, le projet exécute un monde vide pour l'achievement 4 (branche mast
 
 ### Options
 
-
 * `project -m [nombre]` : préciser le nombre d'images à calculer pour l'exécution
+
 * `project -s [graine]` : permet de préciser une graine de génération d'un monde de départ aléatoire
+
 * SDL peut aussi prendre des options pour gérer le défilement des images. Ceux-ci sont consultables en faisant `./sdl.linux.x86-64 -h`.
 
 ## Exécuter les tests
@@ -152,7 +153,8 @@ Si l'on souhaite juste tester certains tests, voici leur liste complète :
 
 ### Nettoyage du dépot
 
-Le nettoyage du dépot de tout exécutable et autres fichiers intermédiaires à la compilation sont aisément supprimable avec
+Le nettoyage du dépot de tout exécutable et autres fichiers intermédiaires à la compilation sont aisément supprimable avec :
+
 ```
 make clean
 ```
@@ -171,4 +173,4 @@ Lien du projet: [https://thor.enseirb-matmeca.fr/git/projetss5-14130/about](http
 
 ## Remerciements
 
-Un grand merci aux équipes pédagogiques qui nous ont accompagnés dans ce projet. Vos précieux conseils nous ont permis de mener ce projet à un stade aussi avancé
+Un grand merci aux équipes pédagogiques qui nous ont accompagnés dans ce projet. Vos précieux conseils nous ont permis de mener ce projet à un stade aussi avancé.
