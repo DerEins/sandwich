@@ -24,14 +24,18 @@ Pour installer l'automate cellulaire :
 
    ```
    git clone https://[username]@thor.enseirb-matmeca.fr/git/projetss5-14130
-   
+   ```
+
+   ```
    cd projetss5-14130
    ```
 2. Télécharger la bibliothèque graphique SDL et la rendre exécutable
    
    ```
    wget https://www.labri.fr/perso/renault/working/teaching/projets/files/exe/sdl.linux.x86-64
-   
+   ```
+
+   ```
    chmod u+x ./sdl.linux.x86-64
    ```
 3. Compiler le projet
@@ -57,10 +61,15 @@ git checkout [tag]
 ```
 
 Voici la liste des tags disponibles :
+
 * `achiev0`
+
 * `achiev1.0`
+
 * `achiev2.0`
+
 * `achiev3.0`
+
 * `achiev4.0`
 
 ## Utilisation
@@ -95,6 +104,7 @@ Par défaut, le projet exécute un monde vide pour l'achievement 4 (branche mast
 Afin de vérifier le bon fonctionnement de certaines composantes du projet, nous avons conçu des tests, dont les sources sont regroupés dans le dossier `tst/`.
 
 Pour directement exécuter tous les tests, il suffit d'utiliser l'option `test` du `Makefile` :
+
 ```
 make tests
 ```
