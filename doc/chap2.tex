@@ -93,12 +93,12 @@ Finalement, lors de la génération du monde, il est important de définir ce qu
 
 On teste la génération d'un monde aléatoire, c'est-à-dire qu'on regarde si deux mondes généré aléatoirement sont bien différents. Pour ce faire, comme il y a une petite chance que deux mondes aléatoires soient identiques, on laisse la possibilité de régénéré un monde dix fois avec la même graine. Si au cours des 1O itérations, le premier monde est identique aux 10 autres avec des graines différentes, alors on considère que la génération d'un monde aléatoire n'est pas respectée.
 
-La fonction \lstinline{void world\_apply\_rule()} étant intrinsèquement liée à la gestion des conflits et à de nombreux autres paramètres externes, elle est en réalité testée dans le fichier \texttt{test\_conflict.c}.
+La fonction \lstinline{void world_apply_rule()} étant intrinsèquement liée à la gestion des conflits et à de nombreux autres paramètres externes, elle est en réalité testée dans le fichier \texttt{test\_conflict.c}.
 
 En ce qui concerne la complexité, si on pose $W$ la longueur et $H$ la largeur de l'image, on a:
 \begin{itemize}
-    \item \lstinline{world\_display}: on parcourt toutes les cases du monde et on les affiches donc la complexité est en $O(W\times H)$
-    \item \lstinline{world\_init}: la complexité est de $O(W\times H)$ (car il faut associer à chaque cellule une valeur)
+    \item \lstinline{world_display}: on parcourt toutes les cases du monde et on les affiches donc la complexité est en $O(W\times H)$
+    \item \lstinline{world_init}: la complexité est de $O(W\times H)$ (car il faut associer à chaque cellule une valeur)
 \end{itemize}
 
 \section{Implémentation et évolution des règles par motifs}
@@ -107,8 +107,8 @@ Le principe d'un automate cellulaire est de définir des règles plus ou moins c
 
 Une règle ne s'applique sur un pixel que dans des conditions spécifiques pré-établies. Nous nous sommes donc posez la question des cellules à observer, des conditions à remplir pour que la règle s'applique. Or dans le jeu de la vie, en plus de regarder l'état de la cellule à modifier, il faut également regarder ses cellules voisines. C'est pourquoi la première  implémentation des règles repose sur les informations suivantes :
 \begin{itemize}
-    \item un tableau de taille 9 (\lstinline{NB\_NEIGHBOUR}) contenant tous les voisins et la cellule a étudiée (située à l'indice 4 du tableau)
-    \item un tableau qui contient les différentes modifications possibles (changements d'état ou déplacements) si la règle correspond à la situation du monde (la taille de ce tableau est déterminé par la valeur \lstinline{MAX\_STATE}) ;
+    \item un tableau de taille 9 (\lstinline{NB_NEIGHBOUR}) contenant tous les voisins et la cellule a étudiée (située à l'indice 4 du tableau)
+    \item un tableau qui contient les différentes modifications possibles (changements d'état ou déplacements) si la règle correspond à la situation du monde (la taille de ce tableau est déterminé par la valeur \lstinline{MAX_STATE}) ;
     \item le nombre de changements possibles pour une règle
 \end{itemize}
 \vspace{\parskip}
@@ -148,7 +148,7 @@ Cette structure est la suivante dans notre code :
 
 Nous avons choisi la convention suivante en ce qui concerne les changements d'une règle : soit on applique un déplacement, soit on applique un changement d'état. Le but de cette convention est de rester cohérent avec le principe de \bsc{Lavoisier} \footnote{En réalité, dans le jeu de la vie, des cellules naissent ou meurent, c-à-d des cellules apparaissent et disparaissent. Le principe physique précédent n'est donc pas respecté. Pour être plus juste, le principe de \bsc{Lavoisier} s'applique uniquement lorsqu'une cellule se déplace} - \emph{rien ne se perd, rien de ne crée, tout se transforme}. En effet, déplacer et modifier la couleur d'une cellule entre deux générations d'images revient à la faire disparaître.
 
-Pour générer les règles de la vie, il a donc fallu générer tous les motifs possibles pour 9 voisins soit $2^9 = 512$ combinaisons. Nous nous sommes inspirés de l'écriture binaire pour générer tous les motifs en noir est blanc. L'inconvénient de cette méthode est qu'il correspond à la formule suivante: $$nombre\_couleurs^{nombre\_voisins} $$
+Pour générer les règles de la vie, il a donc fallu générer tous les motifs possibles pour 9 voisins soit $2^9 = 512$ combinaisons. Nous nous sommes inspirés de l'écriture binaire pour générer tous les motifs en noir est blanc. L'inconvénient de cette méthode est qu'il correspond à la formule suivante: $$\texttt{nombre\_couleurs}^\texttt{nombre\_voisins} $$
 En effet, plus le monde comporte d'états (ie plus il y a de couleurs), plus le nombre de motifs à générer est important. Il est également nécessaire de rappeler que la complexité de l'algorithme principal pour la génération d'une image dépend fortement du nombre de règles. En effet, pour chaque cellule l'algorithme cherche une règle compatible parmi toutes les règles existantes.
 
 Une solution a été de faire des groupes de motifs en utilisant une couleur qui correspond à toutes les autres appelée \texttt{RANDOM\_COLOR} (définit dans la \autoref{sec:ImplementationMonde}). Cela à été fortement utile lors de l'implémentation de la chute de sable. Cependant, cette solution a un inconvénient. Lorsqu'on génère un motif on sait qu'il est unique. Cependant, plusieurs motifs avec des règles différentes peuvent être malencontreusement regroupés sous un même motif comportant \texttt{RANDOM\_COLOR}. En effet, en regardant le graphe \autoref{fig:motifs_avec_random}, si les cases blanches représentent cette couleur bonus, alors le motif 2 est un cas particulier du motif 1. En gagnant en complexité en diminuant le nombre de règle, on perd la bijection entre règle et motif.
