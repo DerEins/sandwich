@@ -61,7 +61,7 @@ test_conflict :
 	rm -R *.o
 
 doc : doc/report.tex
-	cd doc/ && pdflatex report.tex && rm -R *.aux *.log *.toc *.out
+	cd doc/ && pdflatex report.tex && pdflatex report.tex && rm -R *.aux *.log *.toc *.out
 
 clean:
 	rm -f project test_* *.o vgcore* animation 
