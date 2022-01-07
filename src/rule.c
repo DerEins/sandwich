@@ -6,7 +6,7 @@
 #include "utils.h"
 #include "world.h"
 
-/** array storing the rules */
+/** Array storing the rules */
 struct rule rules[MAX_RULE];
 
 /** Return a booleen. True (1) if a cell should live following the rule of the game of life*/
@@ -72,33 +72,6 @@ struct rule* rule_get(unsigned int i)
     return &rules[i];
 }
 
-/** Give the 8 neighbours of a cell and put them in an array of 9 cells */
-/*void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i,
-    unsigned int j)
-{
-    for (int m = 0; m < 3; m++) {
-        for (int n = 0; n < 3; n++) {
-            int idx_l, idx_c; // index of lines and columns
-            idx_l = modulo(i + (m - 1), HEIGHT);
-            idx_c = modulo(j + (n - 1), WIDTH);
-            tab[3 * m + n] = w->t[idx_l * WIDTH + idx_c]; // the formule to transform a Matrix in an array
-        }
-    }
-}*/
-
-/** Return a booleen considering if two arrays of length n are the same */
-/*int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
-{
-    for (int i = 0; i < n; i++) {
-        if (t_r[i] != RANDOM_COLOR) {
-            if (t_r[i] != t_w[i]) {
-                return 0;
-            }
-        }
-    }
-    return 1;
-}*/
-
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
     return r->match(w, i, j);
@@ -108,20 +81,14 @@ unsigned int rule_num_changes(const struct rule* r) { return r->len_changes; }
 
 unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 {
-    //Remplacer par :
-    //assert(idx < rule_num_changes(r));
-    //return r->next_state[idx].next_color;
-    if (idx < rule_num_changes(r)) {
-        return r->next_state[idx].next_color; // idx used with more color
-    } else
-        return 0; // if there is a problem, the 
+    assert(idx < rule_num_changes(r));
+    return r->next_state[idx].next_color;
 }
 
 int rule_change_dx(const struct rule* r, unsigned int idx)
 {
     unsigned int max_change = rule_num_changes(r);
     assert(max_change == 0 || idx < max_change);
-    // fprintf(stderr, "dx: %d \n", r->next_state[idx].dx);
     return r->next_state[idx].dx;
 }
 
