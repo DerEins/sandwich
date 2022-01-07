@@ -21,13 +21,17 @@ Le projet est exclusivement développé en C et la compilation est gérée par u
 Pour installer l'automate cellulaire : 
 
 1. Cloner le dépôt et entrer dedans
+
    ```
    git clone https://[username]@thor.enseirb-matmeca.fr/git/projetss5-14130
+   
    cd projetss5-14130
    ```
 2. Télécharger la bibliothèque graphique SDL et la rendre exécutable
+   
    ```
    wget https://www.labri.fr/perso/renault/working/teaching/projets/files/exe/sdl.linux.x86-64
+   
    chmod u+x ./sdl.linux.x86-64
    ```
 3. Compiler le projet
@@ -99,23 +103,41 @@ make tests
 
 Si l'on souhaite juste tester certains tests, voici leur liste complète :
 * Test du monde :
+  
   * Compilation : `make test_world`
+  
   * Exécution : `./test_world`
+  
 * Test du comportement des règles :
+  
   * Compilation : `make test_rule`
+  
   * Exécution :
+  
     * Tous les tests : `./test_rule`
+  
     * Test de règle uniquement : `./test_rule 1`
+  
     * Test de déplacement uniquement : `./test_rule 2`
+
 * Test du comportement de la file :
+
   * Compilation : `make test_queue`
+  
   * Exécution :
+  
     * Tous les tests : `./test_queue`
+  
     * Test d'ajout uniquement : `./test_queue 1`
+  
     * Test de contenance uniquement : `./test_queue 2`
+  
     * Test de suppression uniquement : `./test_queue 3`
+  
 * Test de la gestion des conflits :
+
   * Compilation : `make test_conflict`
+  
   * Exécution : `./test_conflict | ./sdl.linux.x86-64` (utilisation de `sdl` afin de voir la gestion aléatoire des conflits)
 
 ### Nettoyage du dépot
