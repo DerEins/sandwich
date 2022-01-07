@@ -161,7 +161,11 @@ make clean
 
 ## Rapport
 
-Un compte-rendu de la réflexion et de la méthodologie utilisée pour résoudre ce sujet est disponible [ici](https://thor.enseirb-matmeca.fr/git/projetss5-14130/tree/doc/report.pdf). Le dossier `doc/` comporte aussi les sources et figures utilisés pour sa rédaction.
+Un compte-rendu de la réflexion et de la méthodologie utilisée pour résoudre ce sujet est disponible [ici](https://thor.enseirb-matmeca.fr/git/projetss5-14130/tree/doc/report.pdf). Le dossier `doc/` comporte aussi les sources et figures utilisés pour sa rédaction, et il est directement compilable via make avec :
+
+```
+make doc
+```
 
 ## Auteurs
 

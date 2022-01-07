@@ -1,0 +1,53 @@
+\section{Vue globale du projet}
+\subsection{Énoncé et objectif du sujet}
+\begin{itemize}
+\item Présentation générale du sujet et de ses objectifs 
+\end{itemize}
+\subsection{Stratégie globale d'implémentation}
+\begin{itemize}
+\item Présentation des structures et concepts utilisés pour résoudre le sujet
+\item Présentation et analyse de l'algorithme globale de résolution (\texttt{project.c})
+\item Explication de la stratégie globale des tests
+\end{itemize}
+\subsection{Organisation et dépendances du projet}
+\begin{itemize}
+\item Explication de l'organisation du répertoire de travail (\texttt{src},\texttt{tst}...)
+\item Présentation des graphes des dépendances et explication de l'utilisation des versions "ext" des interfaces (voir \autoref{fig:GrapheDepSource} et \autoref{fig:GrapheDepTests})
+\item Introduction de fonctions et structures nécessaires à la manipulation des objets (\texttt{utils.c} et \texttt{test\_utils.c})
+\end{itemize}
+
+\section{Implémentation du monde et de ses règles}
+\subsection{Représentation et fonctionnement d'un monde}
+\begin{itemize}
+\item Présentation des différents mondes implémentés (aléatoire ou non-aléatoire) en fonction des fonctionnalités ajoutées
+\item Compatibilité du projet avec l'exécutable \texttt{sdl} pour affichage du jeu grâce à \texttt{world\_display}
+\end{itemize}
+\subsection{Implémentation et évolution des règles par motifs}
+\begin{itemize}
+\item Description et analyse de la structure abstraite des règles par motifs
+\item Manipulations de ces règles grâce au concept d'interface
+\item Implémentation des règles initiales 
+\end{itemize}
+\subsection{Refonte des règles : des motifs aux fonctions}
+\begin{itemize}
+\item Limites de la solution des règles par motifs : complexité temporelle élevée pour certain modèles d'implémentation (jeu de la vie notamment)
+\item Notion de pointeurs de fonction
+\item Application aux règles du jeu de la vie
+\end{itemize}
+
+\section{Gestion des changements entre deux mondes}
+\subsection{File d'attente des changements}
+\begin{itemize}
+\item Représentation d'un changement par une structure de type noeud.
+\item Choix d'implémentation de la file sous forme de liste chaînée de ces noeuds : structure et méthodes.
+\item Complexité des méthodes de la file, optimisation.
+\end{itemize}
+\subsection{Gestion des conflits}
+\begin{itemize}
+\item Marquage d'un conflit sur une case d'un monde
+\item Analyse de l'algorithme de résolution des conflits au sein de la file (bon choix en terme de complexité temporelle)
+\item Intégration de la gestion des conflits au sein du projet.
+\end{itemize}
+\section{Conclusion}
+Retour sur les apports techniques (compétences acquises) et organisationnels (travail de groupe, planification des tâches...) qu'on apporté le projet
+

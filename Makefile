@@ -60,5 +60,9 @@ test_conflict :
 	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o conflict.o test_conflict.o utils_test.o
 	rm -R *.o
 
+doc : doc/report.tex
+	cd doc/ && pdflatex report.tex && rm -R *.aux *.log *.toc *.out
+
 clean:
-	rm -f project test_* *.o vgcore* animation
+	rm -f project test_* *.o vgcore* animation 
+	cd doc && rm -f *.aux *.log *.toc *.out

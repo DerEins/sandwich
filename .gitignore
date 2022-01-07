@@ -16,3 +16,7 @@ sdl.linux.x86-64
 cinclude2dot
 dot2drawio.py
 animation
+doc/*.aux 
+doc/*.log 
+doc/*.toc 
+doc/*.out

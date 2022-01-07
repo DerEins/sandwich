@@ -1,0 +1,37 @@
+\section{Découverte du projet, premiers programmes}
+
+\subsection{Implémentation du monde}
+Implémentation de world\_init et world\_display conforme à une utilisation de sdl. Utilisation d'option avec la bibliothèque getop.
+
+\subsection{Implémentation des premières règles}
+Une règle correspond à un motif, donc génération des 512 règles du jeu de la vie avec un modèle de décomposition binaire.
+
+\subsection{Première implémentation de la file}
+Choix d'implémentation d'une file par liste simplement chainée via pointeurs. Un changement est implémanté par une structure \texttt{changement} dédié, chaînable dans une structure \texttt{queue} permettant deux chaînages :
+\begin{itemize}
+    \item une chaîne des changements à effectuer, débutant par \texttt{first\_to\_do}
+    \item une chaîne de changements déjà effectués \texttt{first\_done}, servant de corbeille.
+\end{itemize}
+Limite : Pas de suppression réelle des changements, coût en espace et risque d'erreur de segmentation élevée.
+
+\section{Ajout de nouvelles fonctionnalités}
+\subsection{Ajout des couleurs}
+Remplacement d'un changement unique par plusieurs changements possibles pour une règle.Choix aléatoire de la règle choisie. Nouvelles couleurs possibles pour une cellule. Utilisation de la couleur maximale comme couleur bonus. Elle correspond à n'importe quelle couleur. On peut donc faire des groupes de motifs avec cette méthode.
+
+\subsection{Ajout des déplacements}
+Implémentation d'un tas de sable avec les déplacements.
+
+\section{Amélioration du comportement de l'automate}
+\subsection{Optimisation de la file}
+Recycler l'espace pris par les changements déjà effectués à l'ajout de nouveaux changements (optimisation de l'espace pris, réduction des erreurs de segmentations).
+Avantage : on limite la taille maximale de la file (taille du tableau de changements) à la taille du monde, même s'il y a conflit (suppression possible).
+
+\subsection{Gestion des conflits}
+Création d'une structure conflit. 
+Un tableau est créé dans porject.c pour sauvegarder le nombre de cellules qui veulent se déplacer en une cellule (i,j). 
+Choix aléatoire pour la résolution des conflits lors du défilement. Seul la cellule qui gagne se déplace.
+
+\subsection{Géréricité des règles}
+Pointeur de fonctions pour les règles. Et implémentation des règles pour le jeu de la vie.
+
+\section{Conclusion}
