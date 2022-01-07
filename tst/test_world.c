@@ -35,21 +35,7 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests)
     return EXIT_SUCCESS;
 }
 
-int main(int argc, char** argv)
+int main()
 {
-    if (argc != 2) {
-        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
-        exit(EXIT_FAILURE);
-    }
-
-    int error = EXIT_FAILURE;
-
-    switch (atoi(argv[1])) {
-    case 1:
-        error = test_world_init('s', 42, 33, 10); // test with 2 different seeds for random number (42 and 33)
-        break;
-    default:
-        error = test_world_init('s', 42, 33, 10);
-    }
-    return error;
+    return test_world_init('s', 42, 33, 10); // seed1=42 et seed2=33
 }

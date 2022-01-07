@@ -54,12 +54,9 @@ void world_expected_after_movement(struct world* initial_world,
 /** Match a yellow cell (SAND) */
 int match_sand(const struct world* w, unsigned int i, unsigned int j)
 {
-    if (w->t[(i*WIDTH)+j] == SAND)
-    {
+    if (w->t[(i * WIDTH) + j] == SAND) {
         return 1;
-    }
-    else 
-    {
+    } else {
         return 0;
     }
 }
@@ -123,8 +120,7 @@ int test_rule_match(const struct world* w, const struct rule* r,
 /** Modifies new world following the rules in the array r. */
 void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
 {
-    struct queue q;
-    queue_init(&q);
+    queue_init();
     for (int i = 0; i < WIDTH * HEIGHT; i++) {
         struct position p;
         p.x = i / WIDTH;
@@ -133,15 +129,15 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
             int dx = r->next_state[idx_change].dx;
             int dy = r->next_state[idx_change].dy;
             if (dx || dy) {
-                queue_append(&q, p.x, p.y, 1, idx_change); // la rule avec l'index 1 est celle qui remplace une
-                                                           // cellule par EMPTY en (i,j)
+                queue_append(p.x, p.y, 1, idx_change); // la rule avec l'index 1 est celle qui remplace une
+                                                       // cellule par EMPTY en (i,j)
             }
-            queue_append(&q, modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0, idx_change);
+            queue_append(modulo(p.x + dx, HEIGHT), modulo(p.y + dy, WIDTH), 0, idx_change);
         }
     }
-    while (queue_is_not_empty(&q)) {
+    while (queue_is_not_empty()) {
         struct change* change_tmp;
-        change_tmp = queue_pop(&q);
+        change_tmp = queue_pop();
         if (change_tmp->idx_rule == 1) // Cas particulier du deplacement avec passage de i,j en EMPTY
         {
             w->t[change_tmp->i * WIDTH + change_tmp->j] = EMPTY;
@@ -249,16 +245,14 @@ int test_movements()
 
 int main(int argc, char** argv)
 {
-    if (argc != 2) {
-        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
-        printf("Pour tester les changements de couleurs, ajouter 1. \n");
-        printf("Pour tester les mouvements d'une cellule, ajouter 2. \n");
-        exit(EXIT_FAILURE);
+    int parm = 0;
+    if (argc >= 2) {
+        parm = atoi(argv[1]);
     }
 
     int error = EXIT_FAILURE;
 
-    switch (atoi(argv[1])) {
+    switch (parm) {
     case 1:
         error = test_rule_with_random_color();
         break;
@@ -266,7 +260,7 @@ int main(int argc, char** argv)
         error = test_movements();
         break;
     default:
-        error = test_rule_with_random_color();
+        error = test_rule_with_random_color() + test_movements();
     }
     return error;
 }

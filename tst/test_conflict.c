@@ -22,12 +22,9 @@ void world_test_conflict(struct world* w)
 /** Returns a booleen. True if the cell is yellow (SAND)*/
 int match_sand(const struct world* w, unsigned int i, unsigned int j)
 {
-    if (w->t[(i*WIDTH)+j] == SAND)
-    {
+    if (w->t[(i * WIDTH) + j] == SAND) {
         return 1;
-    }
-    else 
-    {
+    } else {
         return 0;
     }
 }
@@ -35,12 +32,9 @@ int match_sand(const struct world* w, unsigned int i, unsigned int j)
 /** Returns a booleen. True if the cell is green (GRASS)*/
 int match_grass(const struct world* w, unsigned int i, unsigned int j)
 {
-    if (w->t[(i*WIDTH)+j] == GRASS)
-    {
+    if (w->t[(i * WIDTH) + j] == GRASS) {
         return 1;
-    }
-    else 
-    {
+    } else {
         return 0;
     }
 }
@@ -81,8 +75,7 @@ int main()
     for (int i = 0; i < NB_IMAGES; i++) {
         struct conflict t_conflicts[WIDTH * HEIGHT];
         construct_t_conflicts(t_conflicts);
-        struct queue q;
-        queue_init(&q);
+        queue_init();
         for (unsigned int k = 0; k < HEIGHT; k++) {
             for (unsigned int l = 0; l < WIDTH; l++) {
                 for (unsigned int j = 0; j < 2; ++j) {
@@ -95,20 +88,20 @@ int main()
                         if (w.t[index_tmp] == DEAD && (dx_tmp || dy_tmp)) {
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
-                            queue_append(&q, k, l, j, idx_change);
+                            queue_append(k, l, j, idx_change);
                         } else if (!(dx_tmp || dy_tmp)) {
                             t_conflicts[index_tmp].nb_conflicts = t_conflicts[index_tmp].nb_conflicts + 1;
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
-                            queue_append(&q, k, l, j, idx_change);
+                            queue_append(k, l, j, idx_change);
                         }
                         break;
                     }
                 }
             }
         }
-        while (queue_is_not_empty(&q)) {
+        while (queue_is_not_empty()) {
             struct change* change_tmp;
-            change_tmp = queue_pop(&q);
+            change_tmp = queue_pop();
             world_apply_rule(&w, &t[change_tmp->idx_rule], change_tmp->i, change_tmp->j, change_tmp->idx_next_state, t_conflicts);
         }
         world_disp(&w);

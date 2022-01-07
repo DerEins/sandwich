@@ -6,6 +6,20 @@
 
 #define NB_TEST 3
 
+// Structure
+struct queue {
+    int len_list_changes;
+    struct change list_changes[MAX_QUEUE_SIZE];
+    struct change* first_to_do;
+    struct change* first_done;
+    struct change* last_to_do;
+};
+
+// Prototypes
+struct change* get_first_to_do();
+int get_nb_changes();
+
+// Change tabs
 unsigned int test_i[NB_TEST] = { 11, 12, 13 };
 unsigned int test_j[NB_TEST] = { 21, 22, 23 };
 unsigned int test_idx_rule[NB_TEST] = { 1, 2, 3 };
@@ -34,20 +48,20 @@ void change_view(struct change* change)
     printf("Numéro de changement suivant: %d \n", change->idx_next_state);
 }
 
-/** Print a queue to standard output */
-void queue_view_to_do(struct queue* queue)
+/* Print a queue to standard output**/
+void queue_view_to_do()
 {
-    struct change* change = queue->first_to_do;
+    struct change* change = get_first_to_do();
     while (change != NULL) {
         change_view(change);
         change = change->next;
     }
 }
 
-int test_length(int len, struct queue* queue)
+int test_length(int len)
 {
     int len_queue_test = 0;
-    struct change* change_tmp = queue->first_to_do;
+    struct change* change_tmp = get_first_to_do();
     while (change_tmp != NULL) {
         ++len_queue_test;
         change_tmp = change_tmp->next;
@@ -82,14 +96,11 @@ int test_change_integrity(struct change* change, unsigned int i, unsigned int j,
     return EXIT_SUCCESS;
 }
 
-int test_queue_integrity(int start, unsigned int test_i[],
-    unsigned int test_j[], unsigned int test_idx_rule[],
-    struct queue* queue)
+int test_queue_integrity(int start, unsigned int test_i[], unsigned int test_j[], unsigned int test_idx_rule[])
 {
     printf("Test du bon ordre des éléments... ");
-    struct change* change_tmp = queue->first_to_do;
+    struct change* change_tmp = get_first_to_do();
     int i = start;
-    change_tmp = queue->first_to_do;
     while (change_tmp != NULL) {
         if (i >= NB_TEST) {
             fprintf(stderr, "ÉCHEC : La file est plus longue que prévue. \n");
@@ -114,28 +125,27 @@ int test_append()
     printf("######--- TEST 1 : Ajout de changements ---######\n");
     printf("#################################################\n");
 
-    struct queue queue_test;
-    queue_init(&queue_test);
+    queue_init();
 
     printf("Début du test d'ajout... \n \n");
 
     /* Execution of appending changes*/
     for (int i = 0; i < NB_TEST; ++i) {
-        queue_append(&queue_test, test_i[i], test_j[i], test_idx_rule[i],
+        queue_append(test_i[i], test_j[i], test_idx_rule[i],
             test_idx_next_state[i]);
     }
 
     /* Beginning of tests*/
 
     /* Test the lenght of the queue*/
-    test_length(NB_TEST, &queue_test);
+    test_length(NB_TEST);
 
     /* Test the order and the integrety of the queue*/
-    test_queue_integrity(0, test_i, test_j, test_idx_rule, &queue_test);
+    test_queue_integrity(0, test_i, test_j, test_idx_rule);
 
     printf("\nVisiblement, l'ajout de changements à une file fonctionne. \n");
     printf("Voici l'état de la file à la fin du test d'ajout : \n");
-    queue_view_to_do(&queue_test);
+    queue_view_to_do();
 
     printf("\nTest d'ajout terminé avec succès. \n \n");
     return EXIT_SUCCESS;
@@ -150,25 +160,23 @@ int test_is_empty()
     printf("#####################################################################"
            "#\n");
 
-    struct queue queue_test;
-    queue_init(&queue_test);
+    queue_init();
 
     printf("Début du test de contenance... \n \n");
 
     /* Test on an empty queue*/
     printf("Cas d'une file vide...");
-    if (queue_is_not_empty(&queue_test)) {
+    if (queue_is_not_empty()) {
         fprintf(stderr, "ÉCHEC : la file est censée être vide mais le test de "
                         "contenance dit le contraire.\n");
         exit(EXIT_FAILURE);
     }
     printf("VALIDÉ ! \n");
     /* Test on a non-empty queue*/
-    queue_append(&queue_test, test_i[0], test_j[0], test_idx_rule[0],
-        test_idx_next_state[0]);
+    queue_append(test_i[0], test_j[0], test_idx_rule[0], test_idx_next_state[0]);
 
     printf("Cas d'une file non-vide...");
-    if (!queue_is_not_empty(&queue_test)) {
+    if (!queue_is_not_empty()) {
         fprintf(stderr, "ÉCHEC : la file est censée ne pas être vide mais le test "
                         "de contenance dit le contraire.\n");
         exit(EXIT_FAILURE);
@@ -177,7 +185,7 @@ int test_is_empty()
 
     printf("\nVisiblement, le test de contenance de file fonctionne. \n");
     printf("Voici l'état de la file à la fin du test de contenance : \n");
-    queue_view_to_do(&queue_test);
+    queue_view_to_do();
 
     printf("\nTest d'ajout terminé avec succès. \n \n");
     return EXIT_SUCCESS;
@@ -189,14 +197,13 @@ int test_pop()
     printf("######--- TEST 3 : Suppression de premier changement ---######\n");
     printf("##############################################################\n");
 
-    struct queue queue_test;
-    queue_init(&queue_test);
+    queue_init();
 
     /* Test popping a change from an empty list */
     printf("Début du test de suppression ... \n \n");
     printf("Test dans le cas d'une file vide... ");
 
-    struct change* popped_change_test = queue_pop(&queue_test);
+    struct change* popped_change_test = queue_pop();
 
     if (popped_change_test != NULL) {
         fprintf(stderr, "ÉCHEC : Pointeur d'un changement null non null. \n");
@@ -208,23 +215,23 @@ int test_pop()
     printf("Test de suppression du premier changement... \n");
     /* Create changes*/
     for (int i = 0; i < 3; ++i) {
-        queue_append(&queue_test, test_i[i], test_j[i], test_idx_rule[i],
+        queue_append(test_i[i], test_j[i], test_idx_rule[i],
             test_idx_next_state[i]);
     }
 
     /* Pop the first change*/
-    popped_change_test = queue_pop(&queue_test);
+    popped_change_test = queue_pop();
     int idx_start = 1;
 
     /* Test the lenght of the queue*/
-    test_length(NB_TEST - 1, &queue_test);
+    test_length(NB_TEST - 1);
 
     /* Test the integrety of the popped element */
     test_change_integrity(popped_change_test, test_i[0], test_j[0],
         test_idx_rule[0], test_idx_next_state[0]);
 
     /* Test the regularity of the queue*/
-    test_queue_integrity(idx_start, test_i, test_j, test_idx_rule, &queue_test);
+    test_queue_integrity(idx_start, test_i, test_j, test_idx_rule);
 
     printf("\nVisiblement, la suppression du premier changement d'une file "
            "fonctionne. \n");
@@ -235,7 +242,7 @@ int test_pop()
     /* Test adding a new change on a deleted change*/
     printf("\nTest d'ajout après une suppression... \n");
 
-    queue_append(&queue_test, test_i[0], test_j[0], test_idx_rule[0],
+    queue_append(test_i[0], test_j[0], test_idx_rule[0],
         test_idx_next_state[0]);
     permute_tab(test_i);
     permute_tab(test_j);
@@ -243,10 +250,10 @@ int test_pop()
     permute_tab(test_idx_next_state);
     idx_start = 0;
     /* Test the lenght of the queue*/
-    test_length(queue_test.len_list_changes, &queue_test);
+    test_length(get_nb_changes());
 
     /* Test the regularity of the queue*/
-    test_queue_integrity(idx_start, test_i, test_j, test_idx_rule, &queue_test);
+    test_queue_integrity(idx_start, test_i, test_j, test_idx_rule);
 
     printf("\nVisiblement, la suppression du premier changement d'une file "
            "fonctionne. \n");
@@ -255,7 +262,7 @@ int test_pop()
     change_view(popped_change_test);
 
     printf("Voici l'état de la file à la fin du test : \n");
-    queue_view_to_do(&queue_test);
+    queue_view_to_do();
 
     printf("\nTest de suppression terminé avec succès. \n \n");
     return EXIT_SUCCESS;
@@ -263,14 +270,13 @@ int test_pop()
 
 int main(int argc, char* argv[])
 {
-    if (argc != 2) {
-        printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
-        exit(EXIT_FAILURE);
+    int parm = 0;
+    if (argc >= 2) {
+        parm = atoi(argv[1]);
     }
 
     int error = EXIT_FAILURE;
-
-    switch (atoi(argv[1])) {
+    switch (parm) {
     case 1:
         error = test_append();
         break;
