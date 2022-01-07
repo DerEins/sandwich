@@ -56,35 +56,6 @@ struct world world_init(char opt, int seed)
     return w;
 }
 
-/** SAND FALL
- *   for (int i = 0; i < WIDTH * HEIGHT; i++) {
-    if (opt == 's') {
-      switch (rand() % STATE_COUNT + 3) {
-      case 1:
-        w.t[i] = ALIVE;
-        break;
-      case 2:
-        w.t[i] = SAND;
-        break;
-      case 3:
-        w.t[i] = GRASS;
-        break;
-      default:
-        w.t[i] = ALIVE;
-      }
-    } else {
-      if (i < WIDTH * 3 && rand() % 5 == 0) {
-        w.t[i] = SAND;
-      } else if (i >= (WIDTH * (HEIGHT - 1) + (WIDTH) / 2) ||
-                 (i >= WIDTH * (HEIGHT - 1) &&
-                  i <= (WIDTH * (HEIGHT - 1) + WIDTH / 3))) {
-        w.t[i] = GRASS;
-      } else {
-        w.t[i] = ALIVE;
-      }
-    }
-  } */
-
 void world_disp(struct world* w)
 {
     printf("#\n");

@@ -68,9 +68,6 @@ int main(int argc, char* argv[])
                             t_conflicts[index_tmp].conflict_to_process = t_conflicts[index_tmp].conflict_to_process + 1;
                             queue_append(k, l, j, idx_change);
                         } // else do nothing because the cell can't move to a cell not empty
-                        //else {
-                           // fprintf(stderr, "Conflit perdant en %d %d car déplacement dans une case non vide.\n", k + dx_tmp, j = dy_tmp);
-                        //}
                         break;
                     }
                 }

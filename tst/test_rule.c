@@ -240,6 +240,7 @@ int test_movements()
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w);
+    printf("\nTest d'utilisation des déplacements termine avec succes. \n \n");
     return EXIT_SUCCESS;
 }
 
