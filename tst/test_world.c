@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Comment tester la longueur d'un tableau ?
+
 int test_world_init(char opt, int seed1, int seed2, int nb_tests)
 {
     printf("###############################################################\n");
@@ -12,8 +12,7 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests)
     printf("###############################################################\n");
     printf("Initialisation d'un monde ...");
     struct world w1;
-    w1 = world_init(opt, seed1); // peut-on mettre une exceptions si l'appel de la fonction
-                                 // retourne une erreur et ne veut pas compiler ?
+    w1 = world_init(opt, seed1);
     printf("VALIDE !\n");
     printf("Initialisation d'un deuxieme monde aleatoire ...");
     struct world w2;
@@ -24,23 +23,17 @@ int test_world_init(char opt, int seed1, int seed2, int nb_tests)
         int i = 0;
         while (comparer_monde(&w1, &w2) && (i < nb_tests)) {
             printf("Tentative %d ...\n", i);
-            w2 = world_init(opt, seed2); // est-ce que je dois changer la seed ?
+            w2 = world_init(opt, seed2);
             ++i;
         }
         fprintf(stderr,
             "ECHOUE : Les mondes ne sont pas generes de maniere aleatoire \n");
-        // ajouter le test de l'option s !
         exit(EXIT_FAILURE);
     }
     printf("VALIDE !\n");
     printf("\nTest d'initialisation d'un monde termine avec succes. \n \n");
     return EXIT_SUCCESS;
 }
-
-// Faire un test world display a partir d'un modele deja existant (ou regarder
-// les espaces, les #,...)
-
-/*************** Tests ******************/
 
 int main(int argc, char** argv)
 {
@@ -53,7 +46,7 @@ int main(int argc, char** argv)
 
     switch (atoi(argv[1])) {
     case 1:
-        error = test_world_init('s', 42, 33, 10); // seed1=42 et seed2=33
+        error = test_world_init('s', 42, 33, 10); // test with 2 different seeds for random number (42 and 33)
         break;
     default:
         error = test_world_init('s', 42, 33, 10);

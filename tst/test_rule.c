@@ -7,7 +7,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-void create_damier(struct world* w)
+/** Create a 2D world like a checkerboard */
+void create_checkerboard(struct world* w)
 {
 
     for (int i = 0; i < HEIGHT * WIDTH; i++) {
@@ -19,6 +20,7 @@ void create_damier(struct world* w)
     }
 }
 
+/** Create a 2D world filled with grass for the movement test. Only one cell is yellow (SAND).*/
 void create_basic_world(struct world* w)
 {
     for (int i = 0; i < HEIGHT * WIDTH; i++) {
@@ -32,8 +34,7 @@ void create_basic_world(struct world* w)
      */
 }
 
-/** Créer le monde attendu à partir du monde de départ, du monde à modifier, des
- * deplacements, et de la position de la cellule à déplacer*/
+/** Compare the world excepted after a movement (dx,dy) and the one created by evolution_world (based on the application of the rules)*/
 void world_expected_after_movement(struct world* initial_world,
     struct world* final_world, int dx, int dy,
     unsigned int i, unsigned int j)
@@ -50,6 +51,7 @@ void world_expected_after_movement(struct world* initial_world,
     }
 }
 
+/** Match a yellow cell (SAND) */
 int match_sand(const struct world* w, unsigned int i, unsigned int j)
 {
     if (w->t[(i*WIDTH)+j] == SAND)
@@ -61,9 +63,8 @@ int match_sand(const struct world* w, unsigned int i, unsigned int j)
         return 0;
     }
 }
-/** La règel suivante change le SAND (blanc) en EMPTY(noir, idx=0) ou en
- * GRASS(vert,idx=1) Utile  pour le test d'utilisation de RANDOM_COLOR comme
- * couleur bonus ie une couleur qui 'match' avec toutes les couleurs*/
+
+/** Create a rule with 2 change. If the cell is yellow (SAND), the cell change into a EMPTY or GRASS */
 void create_rule1(struct rule* r)
 {
     r->len_changes = 2;
@@ -76,9 +77,7 @@ void create_rule1(struct rule* r)
     r->match = match_sand;
 }
 
-/** Créer une règle comportant 8 déplacements et 1 changement de couleur.
- * Le but est étant de tester les déplacements positifs, négatifs et la gestion
- * des bords d'un monde 3x3 */
+/** Create a rule with 9 changes, 8 movements and one change of color */
 void create_rule_movements(struct rule* r)
 {
     r->len_changes = 9;
@@ -95,19 +94,16 @@ void create_rule_movements(struct rule* r)
     }
     r->next_state[7].next_color = SAND;
     r->next_state[8].next_color = SAND;
-    r->next_state[0].next_color = GRASS; // Le changement de couleur fait passer une cellule de SAND à GRASS
+    r->next_state[0].next_color = GRASS; // change of color -> SAND to GRASD
     r->next_state[7].dx = 2;
     r->next_state[7].dy = 0;
     r->next_state[8].dx = 0;
     r->next_state[8].dy = -2;
-    // Les regles de deplacements sont les suivantes (avec (dx,dy))
+    // The movements are the following (with (dx,dy))
     //(0,0) (1,0) (0,1) (1,1) (-1,0) (0,-1) (-1,-1) (2,0) (0,2)
 }
 
-/** Test si une règle correspond à un motif présent dans le monde,
- * Si c'est le cas, la position est stockée dans le tableau t.
- * La fonction retourne le nombre de correspondances entre la règle et le monde
- * (qui est également la réelle taille de t)*/
+/** Store the position of the cells matching with a rule and return the number of cells matching */
 int test_rule_match(const struct world* w, const struct rule* r,
     struct position t[])
 {
@@ -124,8 +120,7 @@ int test_rule_match(const struct world* w, const struct rule* r,
     return nb_matchs;
 }
 
-/** Applique sur un monde les changement liée à un changement d'une règle.
- * Prend en compte les changements de couleurs et les déplacements.*/
+/** Modifies new world following the rules in the array r. */
 void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
 {
     struct queue q;
@@ -156,7 +151,7 @@ void evolution_world(struct world* w, struct rule* r, unsigned int idx_change)
     }
 }
 
-/** Test des règles utilisant RANDOM_COLOR*/
+/** Test the random color for pattern*/
 int test_rule_with_random_color()
 {
     printf("#####################################################################"
@@ -171,7 +166,7 @@ int test_rule_with_random_color()
     printf("FAIT \n");
     printf("Creation d'un damier...");
     struct world w_damier;
-    create_damier(&w_damier);
+    create_checkerboard(&w_damier);
     printf("FAIT \n");
     world_disp(&w_damier);
     printf("Rechercher du nombres de positions où s'applique la règle avec leurs "
@@ -182,7 +177,7 @@ int test_rule_with_random_color()
     printf("Les positions sont: ");
     afficher_tableau_positions(nb_p_matchs, t_idx_positions);
     printf("Application des changements sur le monde ...");
-    evolution_world(&w_damier, &r, 1); // the SAND is replace by GRASS
+    evolution_world(&w_damier, &r, 1); // SAND replace by GRASS
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w_damier);
@@ -193,15 +188,15 @@ int test_rule_with_random_color()
         if (w_damier.t[index] != GRASS) {
             printf("Erreur : Au moins un changement n'a pas été effectué. \n");
             exit(EXIT_FAILURE);
-        } // ajouter un else qui permet de tester les autres valeurs
+        } 
     }
     printf("FAIT\n");
     printf("\nTest d'utilisation de COLOR_RANDOM termine avec succes. \n \n");
     return EXIT_SUCCESS;
 }
 
-/** Test une règle avec des déplacements*/
-int test_deplacements()
+/** Test the movements of cells */
+int test_movements()
 {
     printf("#####################################################################"
            "############\n");
@@ -245,7 +240,7 @@ int test_deplacements()
     }
 
     printf("Application des changements sur le monde ...");
-    // the SAND is replace by GRASS
+    // the SAND is replaced by GRASS
     printf("FAIT \n");
     printf("Le nouveau monde :\n");
     world_disp(&w);
@@ -256,6 +251,8 @@ int main(int argc, char** argv)
 {
     if (argc != 2) {
         printf("Erreur : il n'a pas été entré le bon nombre de paramètres. \n");
+        printf("Pour tester les changements de couleurs, ajouter 1. \n");
+        printf("Pour tester les mouvements d'une cellule, ajouter 2. \n");
         exit(EXIT_FAILURE);
     }
 
@@ -266,12 +263,10 @@ int main(int argc, char** argv)
         error = test_rule_with_random_color();
         break;
     case 2:
-        error = test_deplacements();
+        error = test_movements();
         break;
     default:
         error = test_rule_with_random_color();
     }
     return error;
-
-    return 0;
 }

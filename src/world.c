@@ -7,7 +7,7 @@
 
 enum state;
 
-/** Create a new world with value 0 (and I want random value)*/
+/** Create a new world for the game of life*/
 struct world world_init(char opt, int seed)
 {
     srand(seed);
@@ -85,7 +85,6 @@ struct world world_init(char opt, int seed)
     }
   } */
 
-/** Display a world according to the rules specified*/
 void world_disp(struct world* w)
 {
     printf("#\n");
@@ -103,11 +102,11 @@ void world_apply_rule(struct world* w, struct rule* r, int i, int j,
     unsigned int dx = rule_change_dx(r, idx_change);
     unsigned int dy = rule_change_dy(r, idx_change);
     int s = solve_conflict(t_conflicts, modulo(i + dx, HEIGHT), modulo(j + dy, WIDTH));
-    if (s) {
-        if (dx || dy) {
+    if (s) { //if the change wins the conflict
+        if (dx || dy) { // movement
             w->t[modulo(i + dx, HEIGHT) * WIDTH + modulo(j + dy, WIDTH)] = rule_change_to(r, idx_change);
-            w->t[i * WIDTH + j] = DEAD;
-        } else {
+            w->t[i * WIDTH + j] = DEAD; //the cell where the particule was become empty
+        } else { //change of color
             w->t[i * WIDTH + j] = rule_change_to(r, idx_change);
         }
     } 

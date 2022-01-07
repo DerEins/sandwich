@@ -1,6 +1,7 @@
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
+/** Enumeration of color for a cell */
 enum state {
     DEAD = 0,
     ALIVE = 16777215,
@@ -13,10 +14,10 @@ enum state {
     FIRST_STATE = DEAD
 };
 
-/** The usal modulo for positive number, for the negative number the function
- * return a positive number like for congruence */
+/** Usual modulo for positive number. For negative number, return a positive number */
 int modulo(int x, int n);
 
+/** Chose which change to apply after matching a rule and a cell. The choice is made with an equal probability.*/
 unsigned int chose_change(unsigned int nb_change);
 
 #endif // __UTILS_H__

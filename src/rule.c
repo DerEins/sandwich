@@ -6,8 +6,10 @@
 #include "utils.h"
 #include "world.h"
 
+/** array storing the rules */
 struct rule rules[MAX_RULE];
 
+/** Return a booleen. True (1) if a cell should live following the rule of the game of life*/
 int born(const struct world* w, unsigned int i, unsigned int j)
 {
     if (w->t[(i * WIDTH + j)] != DEAD) {
@@ -25,6 +27,7 @@ int born(const struct world* w, unsigned int i, unsigned int j)
     }
 }
 
+/** Return a booleen. True (1) if cell should died following the rule of the game of life*/
 int dead(const struct world* w, unsigned int i, unsigned int j)
 {
     if (w->t[(i * WIDTH + j)] != ALIVE) {
@@ -42,7 +45,7 @@ int dead(const struct world* w, unsigned int i, unsigned int j)
     }
 }
 
-void rules_init() // règles pour générer un tas de sable
+void rules_init() // Initialize 2 rules for the game of life
 {
     rules[0].match = born;
     rules[0].len_changes = 1;
@@ -59,18 +62,18 @@ void rules_init() // règles pour générer un tas de sable
 
 unsigned int rules_count()
 {
-    return MAX_RULE; // depend du rules_init()
+    return MAX_RULE; // defined in world_ext.h, change with world_init
 }
 
 struct rule* rule_get(unsigned int i)
 {
     unsigned int max_rule = rules_count();
-    assert(max_rule == 0 || i < max_rule);
+    assert(max_rule == 0 || i < max_rule); //verify if the rule exists in the array rules
     return &rules[i];
 }
 
 /** Give the 8 neighbours of a cell and put them in an array of 9 cells */
-void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i,
+/*void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i,
     unsigned int j)
 {
     for (int m = 0; m < 3; m++) {
@@ -81,10 +84,10 @@ void find_neighbors(unsigned int tab[], const struct world* w, unsigned int i,
             tab[3 * m + n] = w->t[idx_l * WIDTH + idx_c]; // the formule to transform a Matrix in an array
         }
     }
-}
+}*/
 
 /** Return a booleen considering if two arrays of length n are the same */
-int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
+/*int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
 {
     for (int i = 0; i < n; i++) {
         if (t_r[i] != RANDOM_COLOR) {
@@ -94,7 +97,7 @@ int compare_patterns(int n, const unsigned int t_r[], unsigned int t_w[])
         }
     }
     return 1;
-}
+}*/
 
 int rule_match(const struct world* w, const struct rule* r, unsigned int i, unsigned int j)
 {
@@ -105,10 +108,13 @@ unsigned int rule_num_changes(const struct rule* r) { return r->len_changes; }
 
 unsigned int rule_change_to(const struct rule* r, unsigned int idx)
 {
+    //Remplacer par :
+    //assert(idx < rule_num_changes(r));
+    //return r->next_state[idx].next_color;
     if (idx < rule_num_changes(r)) {
-        return r->next_state[idx].next_color; // idx used whith more color
+        return r->next_state[idx].next_color; // idx used with more color
     } else
-        return 0; // 0 signifie une erreur ici
+        return 0; // if there is a problem, the 
 }
 
 int rule_change_dx(const struct rule* r, unsigned int idx)

@@ -9,6 +9,7 @@
 
 #define NB_IMAGES 100
 
+/** Create a world for the conflict with 2 cells intersecting each other (SAND,GRASS) and all the other cells are empty*/
 void world_test_conflict(struct world* w)
 {
     for (int i = 0; i < WIDTH * HEIGHT; ++i) {
@@ -18,7 +19,8 @@ void world_test_conflict(struct world* w)
     w->t[1] = GRASS;
 }
 
-int sand_go_right(const struct world* w, unsigned int i, unsigned int j)
+/** Returns a booleen. True if the cell is yellow (SAND)*/
+int match_sand(const struct world* w, unsigned int i, unsigned int j)
 {
     if (w->t[(i*WIDTH)+j] == SAND)
     {
@@ -30,7 +32,8 @@ int sand_go_right(const struct world* w, unsigned int i, unsigned int j)
     }
 }
 
-int grass_go_down(const struct world* w, unsigned int i, unsigned int j)
+/** Returns a booleen. True if the cell is green (GRASS)*/
+int match_grass(const struct world* w, unsigned int i, unsigned int j)
 {
     if (w->t[(i*WIDTH)+j] == GRASS)
     {
@@ -42,38 +45,39 @@ int grass_go_down(const struct world* w, unsigned int i, unsigned int j)
     }
 }
 
-/** the sand go to the right */
-void create_rule_sand(struct rule* r)
+/** Create a rule where the sand (yellow cell) go to the right */
+void sand_go_right(struct rule* r)
 {
     r->len_changes = 1;
     r->next_state[0].next_color = SAND;
     r->next_state[0].dx = 0;
     r->next_state[0].dy = 1;
-    r->match = sand_go_right;
+    r->match = match_sand;
 }
 
-void create_rule_grass(struct rule* r)
+/** Create a rule where the grass (green cell) go down */
+void grass_go_down(struct rule* r)
 {
     r->len_changes = 1;
     r->next_state[0].next_color = GRASS;
     r->next_state[0].dx = 1;
     r->next_state[0].dy = 0;
-    r->match = grass_go_down;
+    r->match = match_grass;
 }
 
 int main()
 {
     struct rule t[2];
     struct rule r;
-    create_rule_sand(&r);
+    sand_go_right(&r);
     t[0] = r;
-    create_rule_grass(&r);
+    grass_go_down(&r);
     t[1] = r;
     struct world w;
     world_test_conflict(&w);
     printf("%d %d\n", WIDTH, HEIGHT);
     world_disp(&w);
-    srand(128); // essayer avec 128 pour voir les jaunes passer avant.
+    srand(128); // Initialize pseudo-random number
     for (int i = 0; i < NB_IMAGES; i++) {
         struct conflict t_conflicts[WIDTH * HEIGHT];
         construct_t_conflicts(t_conflicts);

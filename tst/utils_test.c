@@ -1,6 +1,7 @@
 #include "utils_test.h"
 #include <stdio.h>
 
+/** Print an array of unsigned integer */
 void afficher_tableau(int n, unsigned int* t)
 {
     for (int i = 0; i < n; i++) {
@@ -9,6 +10,7 @@ void afficher_tableau(int n, unsigned int* t)
     printf("\n");
 }
 
+/** Return a booleen. Compare 2 worlds. */
 int comparer_monde(struct world* w1, struct world* w2)
 {
     for (int i = 0; i < WIDTH * HEIGHT; ++i) {
@@ -20,6 +22,7 @@ int comparer_monde(struct world* w1, struct world* w2)
     return 1;
 }
 
+/** Show the positions in an array with the dallowing structure :(i,j)*/
 void afficher_tableau_positions(int n, struct position* t)
 {
     for (int i = 0; i < n; i++) {
@@ -28,8 +31,7 @@ void afficher_tableau_positions(int n, struct position* t)
     printf("\n");
 }
 
-/**Prend en argument le pointeur vers une règle, len_changes de la rule, un
- * tableau de taille len_changes et retourne tous les déplacements d'une règle*/
+/** Show all the movements defined in a rule r */
 void print_moves_rule(struct rule* r, unsigned int len_changes, struct position* t)
 {
     for (unsigned int i = 0; i < len_changes; ++i) {

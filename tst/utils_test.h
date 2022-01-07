@@ -7,8 +7,9 @@
 
 #define NB_NEIGHBORS 9
 #define MAX_RULE 2
-#define MAX_STATE 50
+#define MAX_STATE 20
 
+/** */
 struct position {
     unsigned int x;
     unsigned int y;

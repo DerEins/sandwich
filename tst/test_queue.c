@@ -14,7 +14,6 @@ unsigned int test_idx_next_state[NB_TEST] = { 0, 1, 2 };
 /*------------- UTILS -------------*/
 
 /** Permute a tab */
-
 void permute_tab(unsigned int tab[])
 {
     int tmp_tab[NB_TEST];
@@ -26,6 +25,7 @@ void permute_tab(unsigned int tab[])
         tab[i] = tmp_tab[i];
     }
 }
+
 /** Print a change attribute to standard output */
 void change_view(struct change* change)
 {
@@ -34,7 +34,7 @@ void change_view(struct change* change)
     printf("Numéro de changement suivant: %d \n", change->idx_next_state);
 }
 
-/* Print a queue to standard output**/
+/** Print a queue to standard output */
 void queue_view_to_do(struct queue* queue)
 {
     struct change* change = queue->first_to_do;
