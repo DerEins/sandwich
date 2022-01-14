@@ -1,10 +1,9 @@
-default:
-  image: gcc
-  script:
-     - apt update && apt -y install make autoconf valgrind
+image: gcc
 
 build:
   stage: build
+  before_script:
+     - apt update && apt -y install make autoconf
   script:
     - echo "Compilation du programme principal..."
     - make project
@@ -15,6 +14,8 @@ build:
 
 test:
   stage: test
+  before_script:
+     - apt update && apt -y install make autoconf
   script:
     - echo "Compilation et exécution des tests..."
     - make test
@@ -23,6 +24,8 @@ test:
 
 standard-run:
   stage: deploy
+  before_script:
+     - apt update && apt -y install valgrind
   script:
     - echo "Exécution standard..."
     - echo "Test de segmentation..."
@@ -35,6 +38,8 @@ standard-run:
 
 custom-run:
   stage: deploy
+  before_script:
+     - apt update && apt -y install valgrind
   script:
     - echo "Exécution personnalisée..."
     - echo "Test de segmentation..."
