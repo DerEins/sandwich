@@ -1,0 +1,23 @@
+
+image: gcc
+
+build:
+  stage: build
+  script:
+    - echo "Compilation du programme principal..."
+    - make project
+    - echo "Compilation terminée avec succès !"
+
+test:
+  stage: test
+  script:
+    - echo "Exécution des tests..."
+    - make test
+    - echo "Test validés !"
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Exécution du programme"
+    - ./project -m 100 -s 256
+    - echo "Exécution réussie" 
