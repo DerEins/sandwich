@@ -7,17 +7,38 @@ build:
     - echo "Compilation du programme principal..."
     - make project
     - echo "Compilation terminée avec succès !"
+  artifacts:
+    paths:
+      - project
 
 test:
   stage: test
   script:
-    - echo "Exécution des tests..."
+    - echo "Compilation et exécution des tests..."
     - make test
-    - echo "Test validés !"
+    - echo "Tests terminés avec succès !"
+    - echo ""
 
-deploy:
+standard-run:
   stage: deploy
   script:
-    - echo "Exécution du programme"
+    - echo "Exécution standard..."
+    - echo "Test de segmentation..."
+    - valgrind ./project -m 100 -s 256
+    - echo "Segmentation saine !"
+    - echo "Test d'exécution..."
     - ./project -m 100 -s 256
-    - echo "Exécution réussie" 
+    - echo "Exécution standard terminée avec succès !"
+    - echo ""
+
+custom-run:
+  stage: deploy
+  script:
+    - echo "Exécution personnalisée..."
+    - echo "Test de segmentation..."
+    - valgrind ./project -m 100 -s 256
+    - echo "Segmentation saine !"
+    - echo "Test d'exécution..."
+    - ./project -m 100 -s 256
+    - echo "Exécution personnalisée terminée avec succès !"
+    - echo ""
