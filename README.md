@@ -105,7 +105,7 @@ make clean
 ```
 
 ## Rapport
-Un compte-rendu de la réflexion et de la méthodologie utilisée pour résoudre ce sujet est disponible [ici](https://thor.enseirb-matmeca.fr/git/projetss5-14130/tree/doc/report.pdf). Le dossier `doc/` comporte aussi les sources et figures utilisés pour sa rédaction, et il est directement compilable via make avec :
+Un compte-rendu de la réflexion et de la méthodologie utilisée pour résoudre ce sujet est disponible [ici](https://framagit.org/DerEins/projetss5-14130/-/blob/master/doc/report.pdf). Le dossier `doc/` comporte aussi les sources et figures utilisés pour sa rédaction, et il est directement compilable via make avec :
 ```sh
 make doc
 ```
@@ -114,7 +114,7 @@ make doc
 **Marine Vovard** - mvovard@bordeaux-inp.fr
 **Mathieu Dupoux** - mdupoux@bordeaux-inp.fr
 
-Lien du projet : [https://thor.enseirb-matmeca.fr/git/projetss5-14130/about](https://thor.enseirb-matmeca.fr/git/projetss5-14130/about)
+Lien du projet : [https://framagit.org/DerEins/projetss5-14130](https://framagit.org/DerEins/projetss5-14130)
 
 ## Remerciements
 Un grand merci aux équipes pédagogiques qui nous ont accompagnés dans ce projet. Vos précieux conseils nous ont permis de mener ce projet à un stade aussi avancé.
