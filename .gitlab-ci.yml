@@ -1,5 +1,5 @@
 
-image: gcc
+image: debian:bullseye
 
 build:
   stage: build
