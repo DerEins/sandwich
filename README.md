@@ -16,7 +16,7 @@ Le projet est exclusivement développé en C et la compilation est gérée par u
 Pour installer l'automate cellulaire : 
 1. Cloner le dépôt et entrer dedans
    ```sh
-   git clone https://[username]@thor.enseirb-matmeca.fr/git/projetss5-14130
+   git clone https://framagit.org/DerEins/projetss5-14130.git
    cd projetss5-14130
    ```
 2. Télécharger la bibliothèque graphique SDL et la rendre exécutable
