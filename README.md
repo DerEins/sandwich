@@ -111,8 +111,8 @@ make doc
 ```
 
 ## Auteurs
-**Marine Vovard** - mvovard@bordeaux-inp.fr
-**Mathieu Dupoux** - mdupoux@bordeaux-inp.fr
+- **Marine Vovard** - mvovard@bordeaux-inp.fr
+- **Mathieu Dupoux** - mdupoux@bordeaux-inp.fr
 
 Lien du projet : [https://framagit.org/DerEins/projetss5-14130](https://framagit.org/DerEins/projetss5-14130)
 
