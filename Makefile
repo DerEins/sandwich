@@ -1,7 +1,22 @@
+# Usefull paths
+SRC= src
+TST= tst
+DOC= doc
+
+# SDL library path
+SDL?= ./sdl.linux.x86-64
+
+# World size
 WIDTH ?= 40
 HEIGHT ?= 30
+
+# Compilations parameters
+CC=gcc
 CFLAGS = -Wall -Wextra -std=c99 -ggdb3
-SANDWICH_FLAGS = -DWIDTH=$(WIDTH) -DHEIGHT=$(HEIGHT)
+CPPFLAGS = -DWIDTH=$(WIDTH) -DHEIGHT=$(HEIGHT)
+
+# LaTeX Doc compiler
+TEX=pdflatex
 
 all: project
 
@@ -9,60 +24,31 @@ test : test_world test_rule test_queue test_conflict
 	./test_world
 	./test_rule
 	./test_queue
-	./test_conflict
-	rm -f test_*
+	./test_conflict | $(SDL) -f 100
 
-project: 
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/world.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/rule.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/utils.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/project.c
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/conflict.c  
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) queue.o world.o rule.o project.o utils.o conflict.o -o project
-	rm -R *.o
+*.o : *.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-test_queue :
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) src/queue.c 
-	gcc -c $(CFLAGS) $(SANDWICH_FLAGS) tst/test_queue.c
-	gcc $(CFLAGS) $(SANDWICH_FLAGS) -o test_queue queue.o test_queue.o
-	rm -R *.o
+project: $(SRC)/project.o $(SRC)/world.o $(SRC)/rule.o $(SRC)/queue.o $(SRC)/conflict.o $(SRC)/utils.o 
+	$(CC) $^ -o $@
 
-test_rule :
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_rule.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/queue.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_rule queue.o rule.o world.o utils.o test_rule.o utils_test.o conflict.o
-	rm -R *.o
+test_queue:  $(SRC)/queue.o $(TST)/test_queue.o
+	$(CC) $^ -o $@
 
-test_world :
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/rule.c 
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/test_world.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/world.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 src/utils.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 -o test_world rule.o world.o utils.o test_world.o conflict.o utils_test.o
-	rm -R *.o
+# Pour test{rule,world,conflict}, on est obligé de dépendre des .c qui doivent être recompilés à cause du
+# changement de la taille du monde spécifique à ces tests.
+test_rule : $(SRC)/rule.c $(SRC)/world.c $(SRC)/queue.c $(SRC)/utils.c $(SRC)/conflict.c $(TST)/test_rule.c $(TST)/utils_test.c
+	$(CC) -DWIDTH=3 -DHEIGHT=3 $(CFLAGS) $^ -o $@
 
-test_conflict :
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/rule.c 
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 tst/test_conflict.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/world.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/utils.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/queue.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 src/conflict.c
-	gcc -c $(CFLAGS) -DWIDTH=3 -DHEIGHT=3 tst/utils_test.c
-	gcc $(CFLAGS) -DWIDTH=3 -DHEIGHT=5 -o test_conflict queue.o rule.o world.o utils.o conflict.o test_conflict.o utils_test.o
-	rm -R *.o
+test_world : $(SRC)/rule.c $(SRC)/world.c $(SRC)/utils.c $(SRC)/conflict.c $(TST)/test_world.c $(TST)/utils_test.c
+	$(CC) -DWIDTH=3 -DHEIGHT=3 $(CFLAGS) $^ -o $@
 
-doc : doc/report.tex
-	cd doc/ && pdflatex report.tex && pdflatex report.tex && rm -R *.aux *.log *.toc *.out
+test_conflict : $(SRC)/rule.c $(SRC)/world.c $(SRC)/queue.c $(SRC)/utils.c $(SRC)/conflict.c $(TST)/test_conflict.c $(TST)/utils_test.c
+	$(CC) -DWIDTH=3 -DHEIGHT=3 $(CFLAGS) $^ -o $@
+
+doc : $(DOC)/report.tex
+	cd $(DOC) && $(TEX) report.tex && $(TEX) report.tex && rm -R *.aux *.log *.toc *.out
 
 clean:
-	rm -f project test_* *.o vgcore* animation 
-	cd doc && rm -f *.aux *.log *.toc *.out
+	rm -f project test_* *.o **/*.o vgcore* animation 
+	cd $(DOC) && rm -f *.aux *.log *.toc *.out
